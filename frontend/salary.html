@@ -4,6 +4,13 @@
 <head>
 <title>Salary</title>
 <link rel="stylesheet" href="style.css">
+
+<script>
+if(localStorage.getItem("loggedIn") !== "true"){
+window.location.href = "login.html"
+}
+</script>
+
 </head>
 
 <body>
@@ -20,6 +27,7 @@
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
+<button onclick="logout()" class ="logout-btn">Logout</button>
 
 </div>
 
@@ -57,6 +65,11 @@
 
 </table>
 
+
+<br><br>
+<button onclick="downloadSalary()">Download Excel</button>
+
+<br><br>
 </div>
 
 
@@ -168,6 +181,15 @@ loadSalary()
 
 loadDrivers()
 loadSalary()
+
+
+function logout(){
+
+localStorage.removeItem("loggedIn")
+
+window.location.href = "login.html"
+
+}
 
 </script>
 

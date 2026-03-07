@@ -508,3 +508,76 @@ def monthly_attendance(db: Session = Depends(get_db)):
             report[a.driver_name] += 1
 
     return report
+
+from fastapi.responses import FileResponse
+import pandas as pd
+
+@app.get("/export_fuel_excel")
+def export_fuel_excel(db: Session = Depends(get_db)):
+
+    fuels = db.query(models.Fuel).all()
+
+    data = []
+    for f in fuels:
+        data.append({
+            "Vehicle": f.vehicle,
+            "Fuel Type": f.fuel_type,
+            "Litres": f.litres,
+            "Rate": f.rate,
+            "Station": f.station,
+            "Date": f.date
+        })
+
+    df = pd.DataFrame(data)
+
+    file_path = "fuel_report.xlsx"
+    df.to_excel(file_path, index=False)
+
+    return FileResponse(file_path, filename="fuel_report.xlsx")
+
+from fastapi.responses import FileResponse
+import pandas as pd
+
+@app.get("/export_fuel_excel")
+def export_fuel_excel(db: Session = Depends(get_db)):
+
+    fuels = db.query(models.Fuel).all()
+
+    data = []
+    for f in fuels:
+        data.append({
+            "Vehicle": f.vehicle,
+            "Fuel Type": f.fuel_type,
+            "Litres": f.litres,
+            "Rate": f.rate,
+            "Station": f.station,
+            "Date": f.date
+        })
+
+    df = pd.DataFrame(data)
+
+    file_path = "fuel_report.xlsx"
+    df.to_excel(file_path, index=False)
+
+    return FileResponse(file_path, filename="fuel_report.xlsx")
+
+@app.get("/export_salary_excel")
+def export_salary_excel(db: Session = Depends(get_db)):
+
+    salaries = db.query(models.Salary).all()
+
+    data = []
+    for s in salaries:
+        data.append({
+            "Driver": s.driver_name,
+            "Amount": s.amount,
+            "Notes": s.notes,
+            "Date": s.date
+        })
+
+    df = pd.DataFrame(data)
+
+    file_path = "salary_report.xlsx"
+    df.to_excel(file_path, index=False)
+
+    return FileResponse(file_path, filename="salary_report.xlsx")

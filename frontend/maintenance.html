@@ -4,6 +4,13 @@
 <head>
 <title>Maintenance</title>
 <link rel="stylesheet" href="style.css">
+
+<script>
+if(localStorage.getItem("loggedIn") !== "true"){
+window.location.href = "login.html"
+}
+</script>
+
 </head>
 
 <body>
@@ -20,6 +27,7 @@
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
+<button onclick="logout()" class ="logout-btn">Logout</button>
 
 </div>
 
@@ -61,7 +69,11 @@
 </tr>
 
 </table>
+<br><br>
 
+<button onclick="downloadMaintenance()">Download Excel</button>
+
+<br><br>
 </div>
 
 
@@ -177,6 +189,15 @@ loadMaintenance()
 
 loadVehicleDropdown()
 loadMaintenance()
+
+
+function logout(){
+
+localStorage.removeItem("loggedIn")
+
+window.location.href = "login.html"
+
+}
 
 </script>
 

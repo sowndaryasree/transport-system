@@ -446,3 +446,22 @@ alert("Attendance saved")
 })
 
 }
+
+function downloadFuel() {
+    window.open("http://127.0.0.1:8000/export_fuel_excel");
+}
+
+function downloadSalary() {
+    window.open("http://127.0.0.1:8000/export_salary_excel");
+}
+
+function downloadMaintenance() {
+    window.open("http://127.0.0.1:8000/export_maintenance_excel");
+
+}
+function logout(){
+
+    localStorage.removeItem("loggedIn")
+    window.location.href = "login.html"
+
+}
