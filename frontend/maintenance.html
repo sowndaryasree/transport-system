@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Maintenance</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Transport</h2>
+
+<a href="dashboard.html">Dashboard</a>
+<a href="vehicles.html">Vehicles</a>
+<a href="drivers.html">Drivers</a>
+<a href="trips.html">Trips</a>
+<a href="fuel.html">Fuel</a>
+<a href="maintenance.html">Maintenance</a>
+<a href="salary.html">Salary</a>
+<a href="attendance.html">Attendance</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Add Maintenance</h1>
+
+<select id="maint_vehicle"></select>
+
+<br><br>
+
+<input id="maint_type" placeholder="Maintenance Type">
+
+<br><br>
+
+<input id="maint_cost" placeholder="Cost">
+
+<br><br>
+
+<input id="maint_workshop" placeholder="Workshop">
+
+<br><br>
+<input type="date" id="maintenance_date">
+<button onclick="addMaintenance()">Add Maintenance</button>
+
+<hr>
+
+<h2>Maintenance Records</h2>
+
+<table id="maintenance_table" border="1">
+
+<tr>
+<th>Vehicle</th>
+<th>Type</th>
+<th>Cost</th>
+<th>Workshop</th>
+<th>Delete</th>
+</tr>
+
+</table>
+
+</div>
+
+
+<script>
+
+const API = "http://127.0.0.1:8000"
+
+
+
+function loadVehicleDropdown(){
+
+fetch(API + "/get_vehicles")
+.then(r=>r.json())
+.then(data=>{
+
+let select = document.getElementById("maint_vehicle")
+
+select.innerHTML = "<option>Select Vehicle</option>"
+
+data.forEach(v=>{
+
+select.innerHTML += `
+<option>${v.vehicle_name}</option>
+`
+
+})
+
+})
+
+}
+
+
+
+function addMaintenance(){
+
+let vehicle = document.getElementById("maint_vehicle").value
+let type = document.getElementById("maint_type").value
+let cost = document.getElementById("maint_cost").value
+let workshop = document.getElementById("maint_workshop").value
+
+fetch(API + "/add_maintenance?vehicle="+vehicle+
+"&maintenance_type="+type+
+"&cost="+cost+
+"&workshop="+workshop,{
+method:"POST"
+})
+.then(()=>{
+
+alert("Maintenance Added")
+
+loadMaintenance()
+
+})
+
+}
+
+
+
+function loadMaintenance(){
+
+fetch(API + "/get_maintenance")
+.then(r=>r.json())
+.then(data=>{
+
+let table = document.getElementById("maintenance_table")
+
+table.innerHTML = `
+<tr>
+<th>Vehicle</th>
+<th>Type</th>
+<th>Cost</th>
+<th>Workshop</th>
+<th>Delete</th>
+</tr>
+`
+
+data.forEach(m=>{
+
+table.innerHTML += `
+<tr>
+<td>${m.vehicle}</td>
+<td>${m.maintenance_type}</td>
+<td>${m.cost}</td>
+<td>${m.workshop}</td>
+<td>
+<button onclick="deleteMaintenance(${m.id})">Delete</button>
+</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+
+
+function deleteMaintenance(id){
+
+fetch(API + "/delete_maintenance/"+id,{
+method:"DELETE"
+})
+.then(()=>{
+
+loadMaintenance()
+
+})
+
+}
+
+
+
+loadVehicleDropdown()
+loadMaintenance()
+
+</script>
+
+</body>
+</html>

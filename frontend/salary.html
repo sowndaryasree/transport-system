@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Salary</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Transport</h2>
+
+<a href="dashboard.html">Dashboard</a>
+<a href="vehicles.html">Vehicles</a>
+<a href="drivers.html">Drivers</a>
+<a href="trips.html">Trips</a>
+<a href="fuel.html">Fuel</a>
+<a href="maintenance.html">Maintenance</a>
+<a href="salary.html">Salary</a>
+<a href="attendance.html">Attendance</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Add Salary</h1>
+
+<select id="salary_driver"></select>
+
+<br><br>
+
+<input id="salary_amount" placeholder="Amount">
+
+<br><br>
+
+<input id="salary_notes" placeholder="Notes (optional)">
+
+<br><br>
+<input type="date" id="salary_date">
+<button onclick="addSalary()">Add Salary</button>
+
+<hr>
+
+<h2>Salary Records</h2>
+
+<table id="salary_table" border="1">
+
+<tr>
+<th>Driver</th>
+<th>Amount</th>
+<th>Notes</th>
+<th>Delete</th>
+</tr>
+
+</table>
+
+</div>
+
+
+<script>
+
+const API = "http://127.0.0.1:8000"
+
+
+
+function loadDrivers(){
+
+fetch(API + "/get_drivers")
+.then(r=>r.json())
+.then(data=>{
+
+let select = document.getElementById("salary_driver")
+
+select.innerHTML = "<option>Select Driver</option>"
+
+data.forEach(d=>{
+
+select.innerHTML += `
+<option>${d.name}</option>
+`
+
+})
+
+})
+
+}
+
+
+
+function addSalary(){
+
+let driver = document.getElementById("salary_driver").value
+let amount = document.getElementById("salary_amount").value
+let notes = document.getElementById("salary_notes").value
+
+fetch(API + "/add_salary?driver_name="+driver+
+"&amount="+amount+
+"&notes="+notes,{
+method:"POST"
+})
+.then(()=>{
+
+alert("Salary Added")
+
+loadSalary()
+
+})
+
+}
+
+
+
+function loadSalary(){
+
+fetch(API + "/get_salary")
+.then(r=>r.json())
+.then(data=>{
+
+let table = document.getElementById("salary_table")
+
+table.innerHTML = `
+<tr>
+<th>Driver</th>
+<th>Amount</th>
+<th>Notes</th>
+<th>Delete</th>
+</tr>
+`
+
+data.forEach(s=>{
+
+table.innerHTML += `
+<tr>
+<td>${s.driver_name}</td>
+<td>${s.amount}</td>
+<td>${s.notes}</td>
+<td>
+<button onclick="deleteSalary(${s.id})">Delete</button>
+</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+
+
+function deleteSalary(id){
+
+fetch(API + "/delete_salary/"+id,{
+method:"DELETE"
+})
+.then(()=>{
+
+loadSalary()
+
+})
+
+}
+
+
+
+loadDrivers()
+loadSalary()
+
+</script>
+
+</body>
+</html>

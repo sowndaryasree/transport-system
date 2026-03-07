@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Drivers</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Transport</h2>
+
+<a href="dashboard.html">Dashboard</a>
+<a href="vehicles.html">Vehicles</a>
+<a href="drivers.html">Drivers</a>
+<a href="trips.html">Trips</a>
+<a href="fuel.html">Fuel</a>
+<a href="maintenance.html">Maintenance</a>
+<a href="salary.html">Salary</a>
+<a href="attendance.html">Attendance</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Add Driver</h1>
+
+<input id="driver_name" placeholder="Driver Name">
+
+<br><br>
+
+<input id="driver_phone" placeholder="Phone Number">
+
+<br><br>
+
+<input id="license_number" placeholder="License Number (Optional)">
+
+<br><br>
+
+<button onclick="addDriver()">Add Driver</button>
+
+<hr>
+
+<h2>Driver List</h2>
+
+<table id="driver_table" border="1">
+
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>License</th>
+<th>Delete</th>
+</tr>
+
+</table>
+
+</div>
+
+
+
+<script>
+
+const API = "http://127.0.0.1:8000"
+
+
+
+function addDriver(){
+
+let name = document.getElementById("driver_name").value
+let phone = document.getElementById("driver_phone").value
+let license = document.getElementById("license_number").value
+
+fetch(API + "/add_driver?name="+name+
+"&phone="+phone+
+"&license_number="+license,{
+method:"POST"
+})
+.then(()=>{
+
+alert("Driver Added")
+
+loadDrivers()
+
+})
+
+}
+
+
+
+function loadDrivers(){
+
+fetch(API + "/get_drivers")
+.then(r=>r.json())
+.then(data=>{
+
+let table = document.getElementById("driver_table")
+
+table.innerHTML = `
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>License</th>
+<th>Delete</th>
+</tr>
+`
+
+data.forEach(d=>{
+
+table.innerHTML += `
+<tr>
+<td>${d.name}</td>
+<td>${d.phone}</td>
+<td>${d.license_number}</td>
+<td>
+<button onclick="deleteDriver(${d.id})">Delete</button>
+</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+
+
+function deleteDriver(id){
+
+fetch(API + "/delete_driver/"+id,{
+method:"DELETE"
+})
+.then(()=>{
+
+loadDrivers()
+
+})
+
+}
+
+
+
+loadDrivers()
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Transport</h2>
+
+<a href="dashboard.html">Dashboard</a>
+<a href="vehicles.html">Vehicles</a>
+<a href="drivers.html">Drivers</a>
+<a href="trips.html">Trips</a>
+<a href="fuel.html">Fuel</a>
+<a href="maintenance.html">Maintenance</a>
+<a href="salary.html">Salary</a>
+<a href="attendance.html">Attendance</a>
+</div>
+
+
+<div class="main">
+
+<h1>Dashboard</h1>
+
+<button onclick="downloadExcel()">Download Excel Report</button>
+
+<br><br>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Trips</h3>
+<p id="total_trips">0</p>
+</div>
+
+<div class="card">
+<h3>Total Income</h3>
+<p id="total_income">0</p>
+</div>
+
+<div class="card">
+<h3>Fuel Expense</h3>
+<p id="fuel_expense">0</p>
+</div>
+
+<div class="card">
+<h3>Maintenance</h3>
+<p id="maintenance_expense">0</p>
+</div>
+
+<div class="card">
+<h3>Driver Salary</h3>
+<p id="salary_expense">0</p>
+</div>
+
+<div class="card">
+<h3>Profit</h3>
+<p id="profit">0</p>
+</div>
+
+</div>
+
+<hr>
+
+<h2>Monthly Income</h2>
+
+<canvas id="monthlyChart"></canvas>
+
+<hr>
+
+<h2>Vehicle Profit</h2>
+
+<canvas id="vehicleChart"></canvas>
+
+</div>
+
+
+<script>
+
+const API = "http://127.0.0.1:8000"
+
+
+
+
+
+function loadDashboard(){
+
+Promise.all([
+fetch(API+"/get_trips").then(r=>r.json()),
+fetch(API+"/get_fuel").then(r=>r.json()),
+fetch(API+"/get_maintenance").then(r=>r.json()),
+fetch(API+"/get_salary").then(r=>r.json())
+])
+
+.then(([trips,fuel,maintenance,salary])=>{
+
+let totalTrips = trips.length
+
+let income = 0
+trips.forEach(t=> income += t.customer_payment)
+
+let fuelCost = 0
+fuel.forEach(f=> fuelCost += f.total_cost)
+
+let maintenanceCost = 0
+maintenance.forEach(m=> maintenanceCost += m.cost)
+
+let salaryCost = 0
+salary.forEach(s=> salaryCost += s.amount)
+
+let profit = income - fuelCost - maintenanceCost - salaryCost
+
+document.getElementById("total_trips").innerText = totalTrips
+document.getElementById("total_income").innerText = income
+document.getElementById("fuel_expense").innerText = fuelCost
+document.getElementById("maintenance_expense").innerText = maintenanceCost
+document.getElementById("salary_expense").innerText = salaryCost
+document.getElementById("profit").innerText = profit
+
+})
+
+}
+
+
+
+
+
+function loadMonthlyChart(){
+
+fetch(API+"/monthly_report")
+.then(r=>r.json())
+.then(data=>{
+
+let labels = Object.keys(data)
+let values = Object.values(data)
+
+new Chart(document.getElementById("monthlyChart"),{
+
+type:"bar",
+
+data:{
+labels:labels,
+datasets:[{
+label:"Monthly Income",
+data:values
+}]
+}
+
+})
+
+})
+
+}
+
+
+
+
+
+function loadVehicleChart(){
+
+fetch(API+"/vehicle_report")
+.then(r=>r.json())
+.then(data=>{
+
+let labels = Object.keys(data)
+let values = Object.values(data)
+
+new Chart(document.getElementById("vehicleChart"),{
+
+type:"pie",
+
+data:{
+labels:labels,
+datasets:[{
+label:"Vehicle Profit",
+data:values
+}]
+}
+
+})
+
+})
+
+}
+
+
+
+
+
+function downloadExcel(){
+
+window.open(API+"/export_excel")
+}
+
+
+
+
+
+loadDashboard()
+loadMonthlyChart()
+loadVehicleChart()
+
+</script>
+
+</body>
+</html>

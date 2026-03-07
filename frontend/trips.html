@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Trips</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>Transport</h2>
+
+<a href="dashboard.html">Dashboard</a>
+<a href="vehicles.html">Vehicles</a>
+<a href="drivers.html">Drivers</a>
+<a href="trips.html">Trips</a>
+<a href="fuel.html">Fuel</a>
+<a href="maintenance.html">Maintenance</a>
+<a href="salary.html">Salary</a>
+<a href="attendance.html">Attendance</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Add Trip</h1>
+
+<label>Vehicle</label>
+<select id="trip_vehicle" onchange="vehicleChange()"></select>
+
+<br><br>
+
+<label>Driver</label>
+<select id="trip_driver"></select>
+
+<br><br>
+
+<!-- LORRY FIELDS -->
+
+<div id="lorry_fields">
+
+<label>Material</label>
+
+<select id="material_type" onchange="materialChange()">
+<option value="M Sand">M Sand</option>
+<option value="P Sand">P Sand</option>
+<option value="Other">Other</option>
+</select>
+
+<br><br>
+
+<input id="manual_material" placeholder="Enter material" style="display:none">
+
+<br><br>
+
+<input id="trip_units" placeholder="Units">
+
+<br><br>
+
+<input id="loading_location" placeholder="Loading Location">
+
+<br><br>
+
+<input id="delivery_location" placeholder="Delivery Location">
+
+<br><br>
+
+<input id="loading_cost" placeholder="Loading Cost">
+
+<br><br>
+
+</div>
+
+
+<!-- JCB FIELDS -->
+
+<div id="jcb_fields" style="display:none">
+
+<label>Work Type</label>
+
+<select id="jcb_work" onchange="workChange()">
+<option value="Cleaning">Cleaning</option>
+<option value="Others">Others</option>
+</select>
+
+<br><br>
+
+<input id="manual_work" placeholder="Enter work type" style="display:none">
+
+<br><br>
+
+<input id="jcb_location" placeholder="Location">
+
+<br><br>
+
+<label>Start Time</label>
+<input type="time" id="start_time">
+
+<br><br>
+
+<label>End Time</label>
+<input type="time" id="end_time">
+
+<br><br>
+
+</div>
+
+
+<input id="trip_customer" placeholder="Customer Name">
+
+<br><br>
+
+<input id="customer_payment" placeholder="Customer Payment">
+
+<br><br>
+
+<label>Start Date</label>
+<input type="date" id="start_date">
+
+<br><br>
+
+<label>End Date</label>
+<input type="date" id="end_date">
+
+<br><br>
+
+<button onclick="addTrip()">Add Trip</button>
+
+<hr>
+
+<h2>Trip Records</h2>
+
+<table border="1" id="trip_table">
+
+<tr>
+<th>Vehicle</th>
+<th>Driver</th>
+<th>Customer</th>
+<th>Start</th>
+<th>End</th>
+<th>Payment</th>
+<th>Delete</th>
+</tr>
+
+</table>
+
+</div>
+
+
+<script>
+
+const API="http://127.0.0.1:8000"
+
+
+
+function loadVehicles(){
+
+fetch(API+"/get_vehicles")
+.then(r=>r.json())
+.then(data=>{
+
+let select=document.getElementById("trip_vehicle")
+
+data.forEach(v=>{
+
+select.innerHTML+=`
+<option value="${v.vehicle_type}">
+${v.vehicle_name}
+</option>
+`
+
+})
+
+})
+
+}
+
+
+
+function loadDrivers(){
+
+fetch(API+"/get_drivers")
+.then(r=>r.json())
+.then(data=>{
+
+let select=document.getElementById("trip_driver")
+
+data.forEach(d=>{
+select.innerHTML+=`<option>${d.name}</option>`
+})
+
+})
+
+}
+
+
+
+function vehicleChange(){
+
+let type=document.getElementById("trip_vehicle").value
+
+if(type=="JCB"){
+
+document.getElementById("lorry_fields").style.display="none"
+document.getElementById("jcb_fields").style.display="block"
+
+}else{
+
+document.getElementById("lorry_fields").style.display="block"
+document.getElementById("jcb_fields").style.display="none"
+
+}
+
+}
+
+
+
+function materialChange(){
+
+let m=document.getElementById("material_type").value
+
+if(m=="Other"){
+document.getElementById("manual_material").style.display="block"
+}else{
+document.getElementById("manual_material").style.display="none"
+}
+
+}
+
+
+
+function workChange(){
+
+let w=document.getElementById("jcb_work").value
+
+if(w=="Others"){
+document.getElementById("manual_work").style.display="block"
+}else{
+document.getElementById("manual_work").style.display="none"
+}
+
+}
+
+
+
+function addTrip(){
+
+let vehicle=document.getElementById("trip_vehicle").value
+let driver=document.getElementById("trip_driver").value
+let customer=document.getElementById("trip_customer").value
+let payment=document.getElementById("customer_payment").value
+let start_date=document.getElementById("start_date").value
+let end_date=document.getElementById("end_date").value
+let start_time=document.getElementById("start_time").value
+let end_time=document.getElementById("end_time").value
+
+let material=document.getElementById("material_type").value
+let units=document.getElementById("trip_units").value
+let loading=document.getElementById("loading_location").value
+let delivery=document.getElementById("delivery_location").value
+let loading_cost=document.getElementById("loading_cost").value
+
+fetch(API+"/add_trip?vehicle="+vehicle+
+"&driver="+driver+
+"&material_type="+material+
+"&units="+units+
+"&loading_location="+loading+
+"&delivery_location="+delivery+
+"&customer="+customer+
+"&loading_cost="+loading_cost+
+"&customer_payment="+payment+
+"&start_date="+start_date+
+"&end_date="+end_date+
+"&start_time="+start_time+
+"&end_time="+end_time,{
+method:"POST"
+})
+
+.then(()=>{
+alert("Trip Added")
+loadTrips()
+})
+
+}
+
+
+
+function loadTrips(){
+
+fetch(API+"/get_trips")
+.then(r=>r.json())
+.then(data=>{
+
+let table=document.getElementById("trip_table")
+
+table.innerHTML=`
+<tr>
+<th>Vehicle</th>
+<th>Driver</th>
+<th>Customer</th>
+<th>Start</th>
+<th>End</th>
+<th>Payment</th>
+<th>Delete</th>
+</tr>
+`
+
+data.forEach(t=>{
+
+table.innerHTML+=`
+<tr>
+<td>${t.vehicle}</td>
+<td>${t.driver}</td>
+<td>${t.customer}</td>
+<td>${t.start_date}</td>
+<td>${t.end_date}</td>
+<td>${t.customer_payment}</td>
+<td>
+<button onclick="deleteTrip(${t.id})">Delete</button>
+</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+function deleteTrip(id){
+
+fetch("http://127.0.0.1:8000/delete_trip/" + id,{
+method:"DELETE"
+})
+.then(()=>{
+
+alert("Trip Deleted")
+
+loadTrips()
+
+})
+
+}
+
+
+
+
+loadVehicles()
+loadDrivers()
+loadTrips()
+
+</script>
+
+</body>
+</html>

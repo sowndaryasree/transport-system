@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Vehicles</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Transport</h2>
+
+<a href="dashboard.html">Dashboard</a>
+<a href="vehicles.html">Vehicles</a>
+<a href="drivers.html">Drivers</a>
+<a href="trips.html">Trips</a>
+<a href="fuel.html">Fuel</a>
+<a href="maintenance.html">Maintenance</a>
+<a href="salary.html">Salary</a>
+<a href="attendance.html">Attendance</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Add Vehicle</h1>
+
+<input id="vehicle_name" placeholder="Vehicle Name">
+
+<br><br>
+
+<input id="vehicle_number" placeholder="Vehicle Number">
+
+<br><br>
+
+<select id="vehicle_type" onchange="vehicleTypeChange()">
+
+<option value="">Select Type</option>
+<option value="Lorry">Lorry</option>
+<option value="JCB">JCB</option>
+
+</select>
+
+<br><br>
+
+<div id="unit_box">
+
+<input id="unit_capacity" placeholder="Unit Capacity">
+
+</div>
+
+<br><br>
+
+<button onclick="addVehicle()">Add Vehicle</button>
+
+<hr>
+
+<h2>Vehicle List</h2>
+
+<table id="vehicle_table"border="1" style="margin-top:20px;">
+
+<tr>
+<th>Name</th>
+<th>Number</th>
+<th>Type</th>
+<th>Unit</th>
+<th>Delete</th>
+</tr>
+
+</table>
+
+</div>
+
+
+
+<script>
+
+const API = "http://127.0.0.1:8000"
+
+
+
+function vehicleTypeChange(){
+
+let type = document.getElementById("vehicle_type").value
+
+if(type == "JCB"){
+document.getElementById("unit_box").style.display = "none"
+}
+else{
+document.getElementById("unit_box").style.display = "block"
+}
+
+}
+
+
+
+function addVehicle(){
+
+let name = document.getElementById("vehicle_name").value
+let number = document.getElementById("vehicle_number").value
+let type = document.getElementById("vehicle_type").value
+let unit = document.getElementById("unit_capacity").value
+
+
+fetch(API + "/add_vehicle?vehicle_name="+name+
+"&vehicle_number="+number+
+"&vehicle_type="+type+
+"&unit_capacity="+unit,{
+method:"POST"
+})
+.then(r=>r.json())
+.then(()=>{
+
+alert("Vehicle Added")
+
+loadVehicles()
+
+})
+
+}
+
+
+
+function loadVehicles(){
+
+fetch(API + "/get_vehicles")
+.then(r=>r.json())
+.then(data=>{
+
+let table = document.getElementById("vehicle_table")
+
+table.innerHTML = `
+<tr>
+<th>Name</th>
+<th>Number</th>
+<th>Type</th>
+<th>Unit</th>
+<th>Delete</th>
+</tr>
+`
+
+data.forEach(v=>{
+
+table.innerHTML += `
+<tr>
+<td>${v.vehicle_name}</td>
+<td>${v.vehicle_number}</td>
+<td>${v.vehicle_type}</td>
+<td>${v.unit_capacity}</td>
+<td>
+<button onclick="deleteVehicle(${v.id})">Delete</button>
+</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+function deleteVehicle(id){
+
+fetch("http://127.0.0.1:8000/delete_vehicle/" + id,{
+method:"DELETE"
+})
+.then(()=>{
+
+alert("Vehicle Deleted")
+
+loadVehicles()
+
+})
+
+}
+
+loadVehicles()
+
+</script>
+
+</body>
+</html>

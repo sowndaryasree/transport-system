@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Fuel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Transport</h2>
+
+<a href="dashboard.html">Dashboard</a>
+<a href="vehicles.html">Vehicles</a>
+<a href="drivers.html">Drivers</a>
+<a href="trips.html">Trips</a>
+<a href="fuel.html">Fuel</a>
+<a href="maintenance.html">Maintenance</a>
+<a href="salary.html">Salary</a>
+<a href="attendance.html">Attendance</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Add Fuel</h1>
+
+<select id="fuel_vehicle"></select>
+
+<br><br>
+
+<select id="fuel_type">
+
+<option value="">Fuel Type</option>
+<option value="Diesel">Diesel</option>
+<option value="Petrol">Petrol</option>
+
+</select>
+
+<br><br>
+
+<input id="fuel_litres" placeholder="Litres">
+
+<br><br>
+
+<input id="fuel_rate" placeholder="Rate">
+
+<br><br>
+
+<input id="fuel_station" placeholder="Fuel Station">
+
+<br><br>
+<input type="date" id="fuel_date">
+<button onclick="addFuel()">Add Fuel</button>
+
+<hr>
+
+<h2>Fuel Records</h2>
+
+<table id="fuel_table" border="1">
+
+<tr>
+<th>Vehicle</th>
+<th>Type</th>
+<th>Litres</th>
+<th>Rate</th>
+<th>Total</th>
+<th>Station</th>
+<th>Delete</th>
+</tr>
+
+</table>
+
+</div>
+
+
+
+<script>
+
+const API = "http://127.0.0.1:8000"
+
+
+
+function loadVehicleDropdown(){
+
+fetch(API + "/get_vehicles")
+.then(r=>r.json())
+.then(data=>{
+
+let select = document.getElementById("fuel_vehicle")
+
+select.innerHTML = "<option>Select Vehicle</option>"
+
+data.forEach(v=>{
+
+select.innerHTML += `
+<option>${v.vehicle_name}</option>
+`
+
+})
+
+})
+
+}
+
+
+
+function addFuel(){
+
+let vehicle = document.getElementById("fuel_vehicle").value
+let type = document.getElementById("fuel_type").value
+let litres = document.getElementById("fuel_litres").value
+let rate = document.getElementById("fuel_rate").value
+let station = document.getElementById("fuel_station").value
+
+fetch(API + "/add_fuel?vehicle="+vehicle+
+"&fuel_type="+type+
+"&litres="+litres+
+"&rate="+rate+
+"&station="+station,{
+method:"POST"
+})
+.then(()=>{
+
+alert("Fuel Added")
+
+loadFuel()
+
+})
+
+}
+
+
+
+function loadFuel(){
+
+fetch(API + "/get_fuel")
+.then(r=>r.json())
+.then(data=>{
+
+let table = document.getElementById("fuel_table")
+
+table.innerHTML = `
+<tr>
+<th>Vehicle</th>
+<th>Type</th>
+<th>Litres</th>
+<th>Rate</th>
+<th>Total</th>
+<th>Station</th>
+<th>Delete</th>
+</tr>
+`
+
+data.forEach(f=>{
+
+table.innerHTML += `
+<tr>
+<td>${f.vehicle}</td>
+<td>${f.fuel_type}</td>
+<td>${f.litres}</td>
+<td>${f.rate}</td>
+<td>${f.total_cost}</td>
+<td>${f.station}</td>
+<td>
+<button onclick="deleteFuel(${f.id})">Delete</button>
+</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+
+
+function deleteFuel(id){
+
+fetch(API + "/delete_fuel/"+id,{
+method:"DELETE"
+})
+.then(()=>{
+
+loadFuel()
+
+})
+
+}
+
+
+
+loadVehicleDropdown()
+loadFuel()
+
+</script>
+
+</body>
+</html>
