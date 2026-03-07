@@ -7,9 +7,7 @@ import pandas as pd
 from fastapi.responses import FileResponse
 from datetime import datetime, timedelta
 
-@app.on_event("startup")
-def startup():
-    models.Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 app.add_middleware(
