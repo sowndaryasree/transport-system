@@ -6,10 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from fastapi.responses import FileResponse
 from datetime import datetime, timedelta
-
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 
 app = FastAPI()
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
