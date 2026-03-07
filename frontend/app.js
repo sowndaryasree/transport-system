@@ -1,4 +1,4 @@
-const API = "https://transport-system-seven.vercel.app";
+const API = "https://transport-system-seven.vercel.app/api";
 
 function addVehicle(){
 

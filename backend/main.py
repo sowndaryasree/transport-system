@@ -11,7 +11,6 @@ from fastapi.responses import FileResponse
 
 
 app = FastAPI()
-app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
 app.add_middleware(
     CORSMiddleware,
