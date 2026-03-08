@@ -3,10 +3,10 @@
 
 <head>
 <title>Fuel</title>
-<link rel="stylesheet" href="/frontend/style.css">
+<link rel="stylesheet" href="style.css">
 <script>
 if(localStorage.getItem("loggedIn") !== "true"){
-window.location.href = "/frontend/login.html"
+window.location.href = "login.html"
 }
 </script>
 
@@ -19,14 +19,14 @@ window.location.href = "/frontend/login.html"
 <h2>Transport</h2>
 
 
-<a href="/frontend/dashboard.html">Dashboard</a>
-<a href="/frontend/vehicles.html">Vehicles</a>
-<a href="/frontend/drivers.html">Drivers</a>
-<a href="/frontend/trips.html">Trips</a>
-<a href="/frontend/fuel.html">Fuel</a>
-<a href="/frontend/maintenance.html">Maintenance</a>
-<a href="/frontend/salary.html">Salary</a>
-<a href="/frontend/attendance.html">Attendance</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="vehicles.html">Vehicles</a>
+<a href="drivers.html">Drivers</a>
+<a href="trips.html">Trips</a>
+<a href="fuel.html">Fuel</a>
+<a href="maintenance.html">Maintenance</a>
+<a href="salary.html">Salary</a>
+<a href="attendance.html">Attendance</a>
 <button onclick="logout()" class ="logout-btn">Logout</button>
 
 </div>
@@ -217,7 +217,7 @@ function logout(){
 
 localStorage.removeItem("loggedIn")
 
-window.location.href = "/frontend/login.html"
+window.location.href = "login.html"
 
 }
 
