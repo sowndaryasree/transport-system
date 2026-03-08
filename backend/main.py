@@ -446,6 +446,7 @@ def add_attendance(
     db.commit()
 
     return {"message":"Attendance saved"}
+
 @app.get("/get_attendance")
 def get_attendance(db: Session = Depends(get_db)):
 
@@ -470,54 +471,10 @@ def monthly_attendance(db: Session = Depends(get_db)):
 
     return report
 
-@app.post("/add_attendance")
-def add_attendance(
-    driver_name: str,
-    date: str,
-    status: str,
-    db: Session = Depends(get_db)
-):
 
-    from datetime import datetime
 
-    date_obj = datetime.strptime(date,"%Y-%m-%d").date()
 
-    record = models.Attendance(
-        driver_name=driver_name,
-        date=date_obj,
-        status=status
-    )
 
-    db.add(record)
-    db.commit()
-
-    return {"message":"Attendance saved"}
-@app.get("/get_attendance")
-def get_attendance(db: Session = Depends(get_db)):
-
-    attendance = db.query(models.Attendance).all()
-
-    return attendance
-
-@app.get("/monthly_attendance")
-def monthly_attendance(db: Session = Depends(get_db)):
-
-    attendance = db.query(models.Attendance).all()
-
-    report = {}
-
-    for a in attendance:
-
-        if a.driver_name not in report:
-            report[a.driver_name] = 0
-
-        if a.status == "Present":
-            report[a.driver_name] += 1
-
-    return report
-
-from fastapi.responses import FileResponse
-import pandas as pd
 
 @app.get("/export_fuel_excel")
 def export_fuel_excel(db: Session = Depends(get_db)):
