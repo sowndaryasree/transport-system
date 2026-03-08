@@ -594,3 +594,29 @@ def export_trips_excel(db: Session = Depends(get_db)):
     df.to_excel(file_path, index=False)
 
     return FileResponse(file_path, filename="trips_report.xlsx")
+
+from fastapi.responses import FileResponse
+import pandas as pd
+
+@app.get("/export_trips_excel")
+def export_trips_excel(db: Session = Depends(get_db)):
+
+    trips = db.query(models.Trip).all()
+
+    data = []
+    for t in trips:
+        data.append({
+            "Vehicle": t.vehicle,
+            "Driver": t.driver,
+            "From": t.from_location,
+            "To": t.to_location,
+            "Load": t.load,
+            "Date": str(t.date)
+        })
+
+    df = pd.DataFrame(data)
+
+    file_path = "trips_report.xlsx"
+    df.to_excel(file_path, index=False)
+
+    return FileResponse(file_path, filename="trips_report.xlsx")
