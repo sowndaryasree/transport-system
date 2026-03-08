@@ -343,3 +343,87 @@ def export_full_report(db: Session = Depends(get_db)):
 
 
     return FileResponse(file_path, filename="transport_full_report.xlsx")
+
+# DELETE VEHICLE
+@app.delete("/delete_vehicle/{vehicle_id}")
+def delete_vehicle(vehicle_id: int, db: Session = Depends(get_db)):
+
+    vehicle = db.query(models.Vehicle).filter(models.Vehicle.id == vehicle_id).first()
+
+    if not vehicle:
+        return {"error": "Vehicle not found"}
+
+    db.delete(vehicle)
+    db.commit()
+
+    return {"message": "Vehicle deleted"}
+
+# DELETE DRIVER
+@app.delete("/delete_driver/{id}")
+def delete_driver(id: int, db: Session = Depends(get_db)):
+
+    driver = db.query(models.Driver).filter(models.Driver.id == id).first()
+
+    if not driver:
+        return {"error": "Driver not found"}
+
+    db.delete(driver)
+    db.commit()
+
+    return {"message": "Driver deleted"}
+
+# DELETE TRIP
+@app.delete("/delete_trip/{trip_id}")
+def delete_trip(trip_id: int, db: Session = Depends(get_db)):
+
+    trip = db.query(models.Trip).filter(models.Trip.id == trip_id).first()
+
+    if not trip:
+        return {"error": "Trip not found"}
+
+    db.delete(trip)
+    db.commit()
+
+    return {"message": "Trip deleted"}
+
+# DELETE FUEL
+@app.delete("/delete_fuel/{id}")
+def delete_fuel(id: int, db: Session = Depends(get_db)):
+
+    fuel = db.query(models.Fuel).filter(models.Fuel.id == id).first()
+
+    if not fuel:
+        return {"error": "Fuel not found"}
+
+    db.delete(fuel)
+    db.commit()
+
+    return {"message": "Fuel deleted"}
+
+# DELETE MAINTENANCE
+@app.delete("/delete_maintenance/{id}")
+def delete_maintenance(id: int, db: Session = Depends(get_db)):
+
+    item = db.query(models.Maintenance).filter(models.Maintenance.id == id).first()
+
+    if not item:
+        return {"error": "Maintenance not found"}
+
+    db.delete(item)
+    db.commit()
+
+    return {"message": "Maintenance deleted"}
+
+# DELETE SALARY
+@app.delete("/delete_salary/{id}")
+def delete_salary(id: int, db: Session = Depends(get_db)):
+
+    salary = db.query(models.Salary).filter(models.Salary.id == id).first()
+
+    if not salary:
+        return {"error": "Salary not found"}
+
+    db.delete(salary)
+    db.commit()
+
+    return {"message": "Salary deleted"}
