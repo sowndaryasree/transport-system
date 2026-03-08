@@ -157,7 +157,7 @@ let attendanceData=[]
 
 function loadDrivers(){
 
-fetch("http://transport-system-seven.vercel.app/api/get_drivers")
+fetch("https://transport-system-1-i84e.onrender.com/get_drivers")
 
 .then(res=>res.json())
 
@@ -291,7 +291,7 @@ status="Clear"
 }
 
 
-fetch(`https://transport-system-seven.vercel.app/api/add_attendance?driver_name=${driver}&date=${date}&status=${status}`,{
+fetch(`https://transport-system-1-i84e.onrender.com/add_attendance?driver_name=${driver}&date=${date}&status=${status}`,{
 method:"POST"
 })
 
@@ -301,7 +301,7 @@ method:"POST"
 
 function loadAttendance(){
 
-fetch("https://transport-system-seven.vercel.app/api/get_attendance")
+fetch("https://transport-system-1-i84e.onrender.com/get_attendance")
 
 .then(res=>res.json())
 
