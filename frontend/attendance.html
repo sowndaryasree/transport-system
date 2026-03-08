@@ -131,9 +131,7 @@ cursor:pointer;
 
 <div class="calendar" id="calendar"></div>
 
-
 </div>
-
 
 
 <script>
@@ -147,13 +145,10 @@ let tempAttendance={}
 function loadDrivers(){
 
 fetch(API+"/get_drivers")
-
 .then(res=>res.json())
-
 .then(data=>{
 
 let driver=document.getElementById("driver")
-
 driver.innerHTML=""
 
 data.forEach(d=>{
@@ -176,8 +171,7 @@ let names=[
 "July","August","September","October","November","December"
 ]
 
-document.getElementById("monthTitle").innerText=
-names[month]+" "+year
+document.getElementById("monthTitle").innerText=names[month]+" "+year
 
 generateCalendar()
 
@@ -203,6 +197,7 @@ for(let i=1;i<=daysInMonth;i++){
 let div=document.createElement("div")
 div.className="day"
 div.innerText=i
+div.dataset.state=""
 
 div.onclick=()=>toggleAttendance(i,div)
 
@@ -227,14 +222,13 @@ div.classList.remove("present","halfday","absent")
 
 let status=""
 
-if(!div.dataset.state){
+if(div.dataset.state===""){
 
 div.dataset.state="Present"
 div.classList.add("present")
 status="Present"
 
 }
-
 else if(div.dataset.state==="Present"){
 
 div.dataset.state="Half"
@@ -242,7 +236,6 @@ div.classList.add("halfday")
 status="Half"
 
 }
-
 else if(div.dataset.state==="Half"){
 
 div.dataset.state="Absent"
@@ -250,7 +243,6 @@ div.classList.add("absent")
 status="Absent"
 
 }
-
 else{
 
 div.dataset.state=""
@@ -276,17 +268,14 @@ let a=tempAttendance[date]
 if(a.status==="Clear") continue
 
 requests.push(
-
 fetch(`${API}/add_attendance?driver_name=${a.driver_name}&date=${date}&status=${a.status}`,{
 method:"POST"
 })
-
 )
 
 }
 
 Promise.all(requests)
-
 .then(()=>{
 
 alert("Attendance Saved")
@@ -302,14 +291,12 @@ loadAttendance()
 function loadAttendance(){
 
 fetch(API+"/get_attendance")
-
 .then(res=>res.json())
-
 .then(data=>{
 
 attendanceData=data
 
-highlightDays()
+updateMonth()
 
 })
 
@@ -362,20 +349,17 @@ d.dataset.state="Absent"
 
 function prevMonth(){
 currentDate.setMonth(currentDate.getMonth()-1)
-updateMonth()
+loadAttendance()
 }
 
 function nextMonth(){
 currentDate.setMonth(currentDate.getMonth()+1)
-updateMonth()
+loadAttendance()
 }
-
-
 
 document.getElementById("driver").addEventListener("change",loadAttendance)
 
 loadDrivers()
-updateMonth()
 
 function logout(){
 localStorage.removeItem("loggedIn")

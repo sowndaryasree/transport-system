@@ -88,6 +88,7 @@ window.location.href = "login.html"
 <br><br>
 
 <button onclick="downloadReport()">Download Full Report</button>
+
 </div>
 
 
@@ -100,6 +101,7 @@ let vehicleChart
 
 
 function formatMoney(num){
+num = Number(num) || 0
 return "₹" + num.toLocaleString("en-IN")
 }
 
@@ -118,16 +120,16 @@ fetch(API+"/get_salary").then(r=>r.json())
 let totalTrips = trips.length
 
 let income = 0
-trips.forEach(t=> income += t.customer_payment)
+trips.forEach(t=> income += Number(t.customer_payment) || 0)
 
 let fuelCost = 0
-fuel.forEach(f=> fuelCost += f.total_cost)
+fuel.forEach(f=> fuelCost += Number(f.total_cost) || 0)
 
 let maintenanceCost = 0
-maintenance.forEach(m=> maintenanceCost += m.cost)
+maintenance.forEach(m=> maintenanceCost += Number(m.cost) || 0)
 
 let salaryCost = 0
-salary.forEach(s=> salaryCost += s.amount)
+salary.forEach(s=> salaryCost += Number(s.amount) || 0)
 
 let profit = income - fuelCost - maintenanceCost - salaryCost
 
@@ -154,8 +156,8 @@ fetch(API+"/monthly_report")
 .then(r=>r.json())
 .then(data=>{
 
-let labels = Object.keys(data)
-let values = Object.values(data)
+let labels = Object.keys(data || {})
+let values = Object.values(data || {})
 
 if(monthlyChart) monthlyChart.destroy()
 
@@ -185,8 +187,8 @@ fetch(API+"/vehicle_report")
 .then(r=>r.json())
 .then(data=>{
 
-let labels = Object.keys(data)
-let values = Object.values(data)
+let labels = Object.keys(data || {})
+let values = Object.values(data || {})
 
 if(vehicleChart) vehicleChart.destroy()
 
@@ -210,15 +212,13 @@ data:values
 
 
 function downloadReport(){
-window.open("https://transport-system-1-i84e.onrender.com/export_full_report")
+window.open(API+"/export_full_report")
 }
-
 
 
 loadDashboard()
 loadMonthlyChart()
 loadVehicleChart()
-
 
 
 function logout(){

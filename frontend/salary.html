@@ -56,6 +56,7 @@ window.location.href = "login.html"
 <br><br>
 
 <button onclick="addSalary()">Add Salary</button>
+<button onclick="updateSalary()">Update Salary</button>
 
 <hr>
 
@@ -68,11 +69,11 @@ window.location.href = "login.html"
 <th>Amount</th>
 <th>Notes</th>
 <th>Date</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 
 </table>
-
 
 </div>
 
@@ -80,6 +81,8 @@ window.location.href = "login.html"
 <script>
 
 const API = "https://transport-system-1-i84e.onrender.com"
+
+let currentSalary = null
 
 
 
@@ -156,6 +159,7 @@ table.innerHTML = `
 <th>Amount</th>
 <th>Notes</th>
 <th>Date</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 `
@@ -164,17 +168,76 @@ data.forEach(s=>{
 
 table.innerHTML += `
 <tr>
+
 <td>${s.driver_name}</td>
 <td>${s.amount}</td>
 <td>${s.notes || "-"}</td>
 <td>${s.salary_date || "-"}</td>
+
+<td>
+<button onclick="editSalary(${s.id},
+'${s.driver_name}',
+'${s.amount}',
+'${s.notes || ""}',
+'${s.salary_date || ""}'
+)">Edit</button>
+</td>
+
 <td>
 <button onclick="deleteSalary(${s.id})">Delete</button>
 </td>
+
 </tr>
 `
 
 })
+
+})
+
+}
+
+
+
+function editSalary(id,driver,amount,notes,date){
+
+document.getElementById("salary_driver").value = driver
+document.getElementById("salary_amount").value = amount
+document.getElementById("salary_notes").value = notes
+document.getElementById("salary_date").value = date
+
+currentSalary = id
+
+}
+
+
+
+function updateSalary(){
+
+if(!currentSalary){
+alert("Select record to update")
+return
+}
+
+let driver = document.getElementById("salary_driver").value
+let amount = document.getElementById("salary_amount").value
+let notes = document.getElementById("salary_notes").value
+let date = document.getElementById("salary_date").value
+
+fetch(API+"/update_salary/"+currentSalary+
+"?driver_name="+driver+
+"&amount="+amount+
+"&notes="+notes+
+"&salary_date="+date,{
+method:"PUT"
+})
+
+.then(()=>{
+
+alert("Salary Updated")
+
+currentSalary = null
+
+loadSalary()
 
 })
 
@@ -196,10 +259,6 @@ loadSalary()
 })
 
 }
-
-
-
-
 
 
 

@@ -29,7 +29,6 @@
 const USERNAME = "harish"
 const PASSWORD = "12345"
 
-
 function login(){
 
 let user = document.getElementById("username").value.trim()
@@ -40,7 +39,7 @@ alert("Please enter username and password")
 return
 }
 
-if(user === "harish" && pass === "12345"){
+if(user === USERNAME && pass === PASSWORD){
 
 localStorage.setItem("loggedIn","true")
 
@@ -57,13 +56,16 @@ alert("Invalid Login")
 
 
 // ENTER KEY LOGIN
-document.addEventListener("keydown",function(e){
+document.getElementById("username").addEventListener("keydown",enterLogin)
+document.getElementById("password").addEventListener("keydown",enterLogin)
+
+function enterLogin(e){
 
 if(e.key === "Enter"){
 login()
 }
 
-})
+}
 
 </script>
 

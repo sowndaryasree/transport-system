@@ -132,6 +132,7 @@ window.location.href="login.html"
 <br><br>
 
 <button onclick="addTrip()">Add Trip</button>
+<button onclick="updateTrip()">Update Trip</button>
 
 <hr>
 
@@ -146,11 +147,11 @@ window.location.href="login.html"
 <th>Start</th>
 <th>End</th>
 <th>Payment</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 
 </table>
-
 
 </div>
 
@@ -159,7 +160,7 @@ window.location.href="login.html"
 
 const API="https://transport-system-1-i84e.onrender.com"
 
-
+let currentTrip=null
 
 
 function loadVehicles(){
@@ -194,6 +195,8 @@ fetch(API+"/get_drivers")
 .then(data=>{
 
 let select=document.getElementById("trip_driver")
+
+select.innerHTML="<option value=''>Select Driver</option>"
 
 data.forEach(d=>{
 select.innerHTML+=`<option>${d.name}</option>`
@@ -318,6 +321,7 @@ table.innerHTML=`
 <th>Start</th>
 <th>End</th>
 <th>Payment</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 `
@@ -326,19 +330,83 @@ data.forEach(t=>{
 
 table.innerHTML+=`
 <tr>
+
 <td>${t.vehicle}</td>
 <td>${t.driver}</td>
 <td>${t.customer}</td>
 <td>${t.start_date}</td>
 <td>${t.end_date}</td>
 <td>${t.customer_payment}</td>
+
+<td>
+<button onclick="editTrip(${t.id},
+'${t.vehicle}',
+'${t.driver}',
+'${t.material_type}',
+'${t.units}',
+'${t.customer}',
+'${t.customer_payment}')">Edit</button>
+</td>
+
 <td>
 <button onclick="deleteTrip(${t.id})">Delete</button>
 </td>
+
 </tr>
 `
 
 })
+
+})
+
+}
+
+
+function editTrip(id,vehicle,driver,material,units,customer,payment){
+
+document.getElementById("trip_vehicle").value=vehicle
+document.getElementById("trip_driver").value=driver
+document.getElementById("material_type").value=material
+document.getElementById("trip_units").value=units
+document.getElementById("trip_customer").value=customer
+document.getElementById("customer_payment").value=payment
+
+currentTrip=id
+
+}
+
+
+function updateTrip(){
+
+if(!currentTrip){
+alert("Select trip to update")
+return
+}
+
+let vehicle=document.getElementById("trip_vehicle").value
+let driver=document.getElementById("trip_driver").value
+let material=document.getElementById("material_type").value
+let units=document.getElementById("trip_units").value
+let customer=document.getElementById("trip_customer").value
+let payment=document.getElementById("customer_payment").value
+
+fetch(API+"/update_trip/"+currentTrip+
+"?vehicle="+vehicle+
+"&driver="+driver+
+"&material_type="+material+
+"&units="+units+
+"&customer="+customer+
+"&customer_payment="+payment,{
+method:"PUT"
+})
+
+.then(()=>{
+
+alert("Trip Updated")
+
+currentTrip=null
+
+loadTrips()
 
 })
 

@@ -68,6 +68,7 @@ window.location.href = "login.html"
 <br><br>
 
 <button onclick="addFuel()">Add Fuel</button>
+<button onclick="updateFuel()">Update Fuel</button>
 
 <hr>
 
@@ -83,11 +84,11 @@ window.location.href = "login.html"
 <th>Total</th>
 <th>Station</th>
 <th>Date</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 
 </table>
-
 
 </div>
 
@@ -95,6 +96,8 @@ window.location.href = "login.html"
 <script>
 
 const API = "https://transport-system-1-i84e.onrender.com"
+
+let currentFuel = null
 
 
 
@@ -180,6 +183,7 @@ table.innerHTML = `
 <th>Total</th>
 <th>Station</th>
 <th>Date</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 `
@@ -195,13 +199,78 @@ table.innerHTML += `
 <td>${f.total_cost}</td>
 <td>${f.station}</td>
 <td>${f.fuel_date || "-"}</td>
+
+<td>
+<button onclick="editFuel(${f.id},
+'${f.vehicle}',
+'${f.fuel_type}',
+'${f.litres}',
+'${f.rate}',
+'${f.station}',
+'${f.fuel_date || ""}'
+)">Edit</button>
+</td>
+
 <td>
 <button onclick="deleteFuel(${f.id})">Delete</button>
 </td>
+
 </tr>
 `
 
 })
+
+})
+
+}
+
+
+
+function editFuel(id,vehicle,type,litres,rate,station,date){
+
+document.getElementById("fuel_vehicle").value=vehicle
+document.getElementById("fuel_type").value=type
+document.getElementById("fuel_litres").value=litres
+document.getElementById("fuel_rate").value=rate
+document.getElementById("fuel_station").value=station
+document.getElementById("fuel_date").value=date
+
+currentFuel=id
+
+}
+
+
+
+function updateFuel(){
+
+if(!currentFuel){
+alert("Select record to update")
+return
+}
+
+let vehicle=document.getElementById("fuel_vehicle").value
+let type=document.getElementById("fuel_type").value
+let litres=document.getElementById("fuel_litres").value
+let rate=document.getElementById("fuel_rate").value
+let station=document.getElementById("fuel_station").value
+let date=document.getElementById("fuel_date").value
+
+fetch(API+"/update_fuel/"+currentFuel+
+"?vehicle="+vehicle+
+"&fuel_type="+type+
+"&litres="+litres+
+"&rate="+rate+
+"&station="+station+
+"&fuel_date="+date,{
+method:"PUT"
+})
+.then(()=>{
+
+alert("Fuel Updated")
+
+currentFuel=null
+
+loadFuel()
 
 })
 
@@ -223,9 +292,6 @@ loadFuel()
 })
 
 }
-
-
-
 
 
 

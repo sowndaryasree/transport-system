@@ -52,6 +52,7 @@ window.location.href = "login.html"
 <br><br>
 
 <button onclick="addDriver()">Add Driver</button>
+<button onclick="updateDriver()">Update Driver</button>
 
 <hr>
 
@@ -63,6 +64,7 @@ window.location.href = "login.html"
 <th>Name</th>
 <th>Phone</th>
 <th>License</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 
@@ -74,6 +76,8 @@ window.location.href = "login.html"
 <script>
 
 const API = "https://transport-system-1-i84e.onrender.com"
+
+let currentDriver = null
 
 
 
@@ -118,29 +122,89 @@ fetch(API + "/get_drivers")
 
 let table = document.getElementById("driver_table")
 
-table.innerHTML = `
+table.innerHTML=`
 <tr>
 <th>Name</th>
 <th>Phone</th>
 <th>License</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 `
 
 data.forEach(d=>{
 
-table.innerHTML += `
+table.innerHTML+=`
 <tr>
+
 <td>${d.name}</td>
 <td>${d.phone}</td>
-<td>${d.license_number || "-"}</td>
+<td>${d.license_number || ""}</td>
+
+<td>
+<button onclick="editDriver(${d.id},
+'${d.name}',
+'${d.phone}',
+'${d.license_number || ""}'
+)">Edit</button>
+</td>
+
 <td>
 <button onclick="deleteDriver(${d.id})">Delete</button>
 </td>
+
 </tr>
 `
 
 })
+
+})
+
+}
+
+
+
+function editDriver(id,name,phone,license){
+
+document.getElementById("driver_name").value=name
+document.getElementById("driver_phone").value=phone
+document.getElementById("license_number").value=license
+
+currentDriver=id
+
+}
+
+
+
+function updateDriver(){
+
+if(!currentDriver){
+alert("Select driver to update")
+return
+}
+
+let name=document.getElementById("driver_name").value
+let phone=document.getElementById("driver_phone").value
+let license=document.getElementById("license_number").value
+
+fetch(API+"/update_driver/"+currentDriver+
+"?name="+name+
+"&phone="+phone+
+"&license_number="+license,{
+method:"PUT"
+})
+
+.then(()=>{
+
+alert("Driver Updated")
+
+document.getElementById("driver_name").value=""
+document.getElementById("driver_phone").value=""
+document.getElementById("license_number").value=""
+
+currentDriver=null
+
+loadDrivers()
 
 })
 

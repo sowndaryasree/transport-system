@@ -66,6 +66,7 @@ window.location.href="login.html"
 <br><br>
 
 <button onclick="addVehicle()">Add Vehicle</button>
+<button onclick="updateVehicle()">Update Vehicle</button>
 
 <hr>
 
@@ -78,6 +79,7 @@ window.location.href="login.html"
 <th>Number</th>
 <th>Type</th>
 <th>Unit</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 
@@ -90,6 +92,7 @@ window.location.href="login.html"
 
 const API="https://transport-system-1-i84e.onrender.com"
 
+let currentVehicle=null
 
 
 function vehicleTypeChange(){
@@ -160,6 +163,7 @@ table.innerHTML=`
 <th>Number</th>
 <th>Type</th>
 <th>Unit</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 `
@@ -168,17 +172,83 @@ data.forEach(v=>{
 
 table.innerHTML+=`
 <tr>
+
 <td>${v.vehicle_name}</td>
 <td>${v.vehicle_number}</td>
 <td>${v.vehicle_type}</td>
 <td>${v.unit_capacity || "-"}</td>
+
+<td>
+<button onclick="editVehicle(
+${v.id},
+'${v.vehicle_name}',
+'${v.vehicle_number}',
+'${v.vehicle_type}',
+'${v.unit_capacity || ""}'
+)">Edit</button>
+</td>
+
 <td>
 <button onclick="deleteVehicle(${v.id})">Delete</button>
 </td>
+
 </tr>
 `
 
 })
+
+})
+
+}
+
+
+
+function editVehicle(id,name,number,type,unit){
+
+document.getElementById("vehicle_name").value=name
+document.getElementById("vehicle_number").value=number
+document.getElementById("vehicle_type").value=type
+document.getElementById("unit_capacity").value=unit
+
+vehicleTypeChange()
+
+currentVehicle=id
+
+}
+
+
+
+function updateVehicle(){
+
+if(!currentVehicle){
+alert("Select vehicle to update")
+return
+}
+
+let name=document.getElementById("vehicle_name").value
+let number=document.getElementById("vehicle_number").value
+let type=document.getElementById("vehicle_type").value
+let unit=document.getElementById("unit_capacity").value
+
+if(type=="JCB"){
+unit=""
+}
+
+fetch(API+"/update_vehicle/"+currentVehicle+
+"?vehicle_name="+name+
+"&vehicle_number="+number+
+"&vehicle_type="+type+
+"&unit_capacity="+unit,{
+method:"PUT"
+})
+
+.then(()=>{
+
+alert("Vehicle Updated")
+
+currentVehicle=null
+
+loadVehicles()
 
 })
 

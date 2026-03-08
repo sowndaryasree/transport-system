@@ -60,6 +60,7 @@ window.location.href = "login.html"
 <br><br>
 
 <button onclick="addMaintenance()">Add Maintenance</button>
+<button onclick="updateMaintenance()">Update Maintenance</button>
 
 <hr>
 
@@ -73,11 +74,11 @@ window.location.href = "login.html"
 <th>Cost</th>
 <th>Workshop</th>
 <th>Date</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 
 </table>
-
 
 </div>
 
@@ -85,6 +86,8 @@ window.location.href = "login.html"
 <script>
 
 const API = "https://transport-system-1-i84e.onrender.com"
+
+let currentMaintenance = null
 
 
 function loadVehicleDropdown(){
@@ -165,6 +168,7 @@ table.innerHTML = `
 <th>Cost</th>
 <th>Workshop</th>
 <th>Date</th>
+<th>Edit</th>
 <th>Delete</th>
 </tr>
 `
@@ -173,18 +177,81 @@ data.forEach(m=>{
 
 table.innerHTML += `
 <tr>
+
 <td>${m.vehicle}</td>
 <td>${m.maintenance_type}</td>
 <td>${m.cost}</td>
 <td>${m.workshop}</td>
 <td>${m.maintenance_date || "-"}</td>
+
+<td>
+<button onclick="editMaintenance(${m.id},
+'${m.vehicle}',
+'${m.maintenance_type}',
+'${m.cost}',
+'${m.workshop}',
+'${m.maintenance_date || ""}'
+)">Edit</button>
+</td>
+
 <td>
 <button onclick="deleteMaintenance(${m.id})">Delete</button>
 </td>
+
 </tr>
 `
 
 })
+
+})
+
+}
+
+
+
+function editMaintenance(id,vehicle,type,cost,workshop,date){
+
+document.getElementById("maint_vehicle").value = vehicle
+document.getElementById("maint_type").value = type
+document.getElementById("maint_cost").value = cost
+document.getElementById("maint_workshop").value = workshop
+document.getElementById("maintenance_date").value = date
+
+currentMaintenance = id
+
+}
+
+
+
+function updateMaintenance(){
+
+if(!currentMaintenance){
+alert("Select record to update")
+return
+}
+
+let vehicle = document.getElementById("maint_vehicle").value
+let type = document.getElementById("maint_type").value
+let cost = document.getElementById("maint_cost").value
+let workshop = document.getElementById("maint_workshop").value
+let date = document.getElementById("maintenance_date").value
+
+fetch(API+"/update_maintenance/"+currentMaintenance+
+"?vehicle="+vehicle+
+"&maintenance_type="+type+
+"&cost="+cost+
+"&workshop="+workshop+
+"&maintenance_date="+date,{
+method:"PUT"
+})
+
+.then(()=>{
+
+alert("Maintenance Updated")
+
+currentMaintenance = null
+
+loadMaintenance()
 
 })
 
@@ -206,9 +273,6 @@ loadMaintenance()
 })
 
 }
-
-
-
 
 
 

@@ -37,6 +37,7 @@ table.innerHTML=`
 <th>Number</th>
 <th>Type</th>
 <th>Unit</th>
+<th>Edit</th>
 </tr>
 `;
 
@@ -48,6 +49,7 @@ table.innerHTML+=`
 <td>${v.vehicle_number}</td>
 <td>${v.vehicle_type}</td>
 <td>${v.unit_capacity}</td>
+<td><button onclick="editVehicle('${v.id}','${v.vehicle_name}','${v.vehicle_number}','${v.vehicle_type}','${v.unit_capacity}')">Edit</button></td>
 </tr>
 `;
 
@@ -93,6 +95,7 @@ table.innerHTML=`
 <th>Name</th>
 <th>Phone</th>
 <th>License</th>
+<th>Edit</th>
 </tr>
 `;
 
@@ -103,6 +106,7 @@ table.innerHTML+=`
 <td>${d.name}</td>
 <td>${d.phone}</td>
 <td>${d.license_number}</td>
+<td><button onclick="editDriver('${d.id}','${d.name}','${d.phone}','${d.license_number}')">Edit</button></td>
 </tr>
 `;
 
@@ -173,6 +177,7 @@ table.innerHTML=`
 <th>Units</th>
 <th>Customer</th>
 <th>Payment</th>
+<th>Edit</th>
 </tr>
 `;
 
@@ -186,6 +191,7 @@ table.innerHTML+=`
 <td>${t.units}</td>
 <td>${t.customer}</td>
 <td>${t.customer_payment}</td>
+<td><button onclick="editTrip('${t.id}','${t.vehicle}','${t.driver}','${t.material_type}','${t.units}','${t.customer}','${t.customer_payment}')">Edit</button></td>
 </tr>
 `;
 
@@ -239,6 +245,7 @@ table.innerHTML=`
 <th>Rate</th>
 <th>Total</th>
 <th>Station</th>
+<th>Edit</th>
 </tr>
 `;
 
@@ -252,6 +259,7 @@ table.innerHTML+=`
 <td>${f.rate}</td>
 <td>${f.total_cost}</td>
 <td>${f.station}</td>
+<td><button onclick="editFuel('${f.id}','${f.vehicle}','${f.fuel_type}','${f.litres}','${f.rate}','${f.station}','${f.fuel_date}')">Edit</button></td>
 </tr>
 `;
 
@@ -298,6 +306,7 @@ table.innerHTML=`
 <th>Driver</th>
 <th>Amount</th>
 <th>Notes</th>
+<th>Edit</th>
 </tr>
 `;
 
@@ -308,6 +317,7 @@ table.innerHTML+=`
 <td>${s.driver_name}</td>
 <td>${s.amount}</td>
 <td>${s.notes}</td>
+<td><button onclick="editSalary('${s.id}','${s.driver_name}','${s.amount}','${s.notes}','${s.salary_date}')">Edit</button></td>
 </tr>
 `;
 
@@ -320,54 +330,75 @@ table.innerHTML+=`
 loadSalary();
 
 
-// DASHBOARD
-function loadDashboard(){
+// EDIT FUEL
+function editFuel(id,vehicle,type,litres,rate,station,date){
 
-Promise.all([
-fetch(API+"/get_trips").then(r=>r.json()),
-fetch(API+"/get_fuel").then(r=>r.json()),
-fetch(API+"/get_maintenance").then(r=>r.json()),
-fetch(API+"/get_salary").then(r=>r.json())
-])
-.then(([trips,fuel,maintenance,salary])=>{
+document.getElementById("fuel_vehicle").value=vehicle
+document.getElementById("fuel_type").value=type
+document.getElementById("fuel_litres").value=litres
+document.getElementById("fuel_rate").value=rate
+document.getElementById("fuel_station").value=station
+document.getElementById("fuel_date").value=date
 
-let totalTrips=trips.length;
-
-let income=0;
-trips.forEach(t=>income+=t.customer_payment);
-
-let fuelCost=0;
-fuel.forEach(f=>fuelCost+=f.total_cost);
-
-let maintenanceCost=0;
-maintenance.forEach(m=>maintenanceCost+=m.cost);
-
-let salaryCost=0;
-salary.forEach(s=>salaryCost+=s.amount);
-
-let profit=income-fuelCost-maintenanceCost-salaryCost;
-
-document.getElementById("total_trips").innerText=totalTrips;
-document.getElementById("total_income").innerText=income;
-document.getElementById("fuel_expense").innerText=fuelCost;
-document.getElementById("maintenance_expense").innerText=maintenanceCost;
-document.getElementById("salary_expense").innerText=salaryCost;
-document.getElementById("profit").innerText=profit;
-
-});
+window.currentFuel=id
 
 }
 
-loadDashboard();
+function updateFuel(){
 
+let vehicle=document.getElementById("fuel_vehicle").value
+let type=document.getElementById("fuel_type").value
+let litres=document.getElementById("fuel_litres").value
+let rate=document.getElementById("fuel_rate").value
+let station=document.getElementById("fuel_station").value
+let date=document.getElementById("fuel_date").value
 
-// EXPORTS
-function downloadReport(){
-window.open("https://transport-system-1-i84e.onrender.com/export_full_report")
+fetch(API+"/update_fuel/"+window.currentFuel+
+"?vehicle="+vehicle+
+"&fuel_type="+type+
+"&litres="+litres+
+"&rate="+rate+
+"&station="+station+
+"&fuel_date="+date,{
+method:"PUT"
+})
+.then(()=>{
+alert("Fuel Updated")
+loadFuel()
+})
+
 }
 
-// LOGOUT
-function logout(){
-localStorage.removeItem("loggedIn")
-window.location.href="login.html"
+
+// EDIT SALARY
+function editSalary(id,driver,amount,notes,date){
+
+document.getElementById("salary_driver").value=driver
+document.getElementById("salary_amount").value=amount
+document.getElementById("salary_notes").value=notes
+document.getElementById("salary_date").value=date
+
+window.currentSalary=id
+
+}
+
+function updateSalary(){
+
+let driver=document.getElementById("salary_driver").value
+let amount=document.getElementById("salary_amount").value
+let notes=document.getElementById("salary_notes").value
+let date=document.getElementById("salary_date").value
+
+fetch(API+"/update_salary/"+window.currentSalary+
+"?driver_name="+driver+
+"&amount="+amount+
+"&notes="+notes+
+"&salary_date="+date,{
+method:"PUT"
+})
+.then(()=>{
+alert("Salary Updated")
+loadSalary()
+})
+
 }
