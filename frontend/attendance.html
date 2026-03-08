@@ -322,7 +322,7 @@ d.dataset.state=""
 
 attendanceData.forEach(a=>{
 
-if(a.driver_name===driver && a.date.startsWith(date)){
+if(a.driver_name===driver && a.date===date){
 
 if(a.status==="Present"){
 d.classList.add("present")

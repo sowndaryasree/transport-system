@@ -58,11 +58,11 @@ gap:20px;
 
 .card{
 background:#1e293b;
-padding:20px;
-border-radius:10px;
-width:180px;
-text-align:center;
-transition:0.2s;
+padding:25px;
+border-radius:12px;
+width:350px;
+line-height:1.6;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
 .card:hover{
@@ -212,4 +212,8 @@ transition:0.2s;
 
 .logout-btn:hover{
 background:#e63c3c;
+}
+.day:hover{
+transform:scale(1.05);
+background:#334155;
 }
