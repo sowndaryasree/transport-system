@@ -424,22 +424,37 @@ def add_maintenance(
 
     return {"message":"Maintenance added"}
 
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from datetime import datetime
+import models
+from database import get_db
+
+
+# ADD OR UPDATE ATTENDANCE
 @app.post("/add_attendance")
-def add_attendance(driver_name:str,date:str,status:str,db:Session=Depends(get_db)):
+def add_attendance(
+    driver_name: str,
+    date: str,
+    status: str,
+    db: Session = Depends(get_db)
+):
 
-    from datetime import datetime
+    date_obj = datetime.strptime(date, "%Y-%m-%d").date()
 
-    date_obj=datetime.strptime(date,"%Y-%m-%d").date()
-
-    record=db.query(models.Attendance).filter(
-        models.Attendance.driver_name==driver_name,
-        models.Attendance.date==date_obj
+    # check if record already exists
+    record = db.query(models.Attendance).filter(
+        models.Attendance.driver_name == driver_name,
+        models.Attendance.date == date_obj
     ).first()
 
+    # update if exists
     if record:
-        record.status=status
+        record.status = status
+
+    # create if not exists
     else:
-        record=models.Attendance(
+        record = models.Attendance(
             driver_name=driver_name,
             date=date_obj,
             status=status
@@ -448,14 +463,23 @@ def add_attendance(driver_name:str,date:str,status:str,db:Session=Depends(get_db
 
     db.commit()
 
-    return {"message":"Attendance saved"}
+    return {"message": "Attendance saved"}
 
 @app.get("/get_attendance")
 def get_attendance(db: Session = Depends(get_db)):
 
     attendance = db.query(models.Attendance).all()
 
-    return attendance
+    result = []
+
+    for a in attendance:
+        result.append({
+            "driver_name": a.driver_name,
+            "date": str(a.date),
+            "status": a.status
+        })
+
+    return result
 
 @app.get("/monthly_attendance")
 def monthly_attendance(db: Session = Depends(get_db)):
@@ -467,16 +491,22 @@ def monthly_attendance(db: Session = Depends(get_db)):
     for a in attendance:
 
         if a.driver_name not in report:
-            report[a.driver_name] = 0
+            report[a.driver_name] = {
+                "present": 0,
+                "half": 0,
+                "absent": 0
+            }
 
         if a.status == "Present":
-            report[a.driver_name] += 1
+            report[a.driver_name]["present"] += 1
+
+        elif a.status == "Half":
+            report[a.driver_name]["half"] += 1
+
+        elif a.status == "Absent":
+            report[a.driver_name]["absent"] += 1
 
     return report
-
-
-
-
 
 
 @app.get("/export_fuel_excel")
