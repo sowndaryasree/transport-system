@@ -464,3 +464,37 @@ function logout(){
     window.location.href = "login.html"
 
 }
+
+let tempAttendance={}
+
+function saveAttendance(){
+
+let requests=[]
+
+for(let date in tempAttendance){
+
+let a=tempAttendance[date]
+
+requests.push(
+
+fetch(`https://transport-system-1-i84e.onrender.com/add_attendance?driver_name=${a.driver_name}&date=${date}&status=${a.status}`,{
+method:"POST"
+})
+
+)
+
+}
+
+Promise.all(requests)
+
+.then(()=>{
+
+alert("Attendance saved successfully")
+
+tempAttendance={}
+
+loadAttendance()
+
+})
+
+}
