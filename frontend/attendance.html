@@ -3,14 +3,13 @@
 
 <head>
 
-
 <title>Driver Attendance</title>
 
 <link rel="stylesheet" href="style.css">
 
 <script>
 if(localStorage.getItem("loggedIn") !== "true"){
-window.location.href = "login.html"
+    window.location.href = "login.html"
 }
 </script>
 
@@ -85,14 +84,11 @@ cursor:pointer;
 
 </head>
 
-
 <body>
 
 <div class="sidebar">
 
 <h2>Transport</h2>
-
-
 
 <a href="dashboard.html">Dashboard</a>
 <a href="vehicles.html">Vehicles</a>
@@ -102,10 +98,10 @@ cursor:pointer;
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
-<button onclick="logout()" class ="logout-btn">Logout</button>
+
+<button onclick="logout()" class="logout-btn">Logout</button>
 
 </div>
-
 
 
 <div class="content">
@@ -119,7 +115,6 @@ cursor:pointer;
 
 </div>
 
-
 <div class="month-nav">
 
 <button onclick="prevMonth()">◀</button>
@@ -129,7 +124,6 @@ cursor:pointer;
 <button onclick="nextMonth()">▶</button>
 
 </div>
-
 
 <div class="calendar-header">
 <div>Sun</div>
@@ -141,15 +135,14 @@ cursor:pointer;
 <div>Sat</div>
 </div>
 
-
 <div class="calendar" id="calendar"></div>
-
 
 </div>
 
 
-
 <script>
+
+const API="https://transport-system-1-i84e.onrender.com"
 
 let currentDate=new Date()
 let attendanceData=[]
@@ -157,7 +150,7 @@ let attendanceData=[]
 
 function loadDrivers(){
 
-fetch("https://transport-system-1-i84e.onrender.com/get_drivers")
+fetch(API+"/get_drivers")
 
 .then(res=>res.json())
 
@@ -184,7 +177,6 @@ loadAttendance()
 function updateMonth(){
 
 let month=currentDate.getMonth()
-
 let year=currentDate.getFullYear()
 
 let monthNames=[
@@ -208,18 +200,15 @@ let calendar=document.getElementById("calendar")
 calendar.innerHTML=""
 
 let year=currentDate.getFullYear()
-
 let month=currentDate.getMonth()
 
 let firstDay=new Date(year,month,1).getDay()
-
 let daysInMonth=new Date(year,month+1,0).getDate()
 
 
 for(let i=0;i<firstDay;i++){
 
 let empty=document.createElement("div")
-
 calendar.appendChild(empty)
 
 }
@@ -238,7 +227,6 @@ div.onclick=()=>toggleAttendance(i,div)
 calendar.appendChild(div)
 
 }
-
 
 highlightDays()
 
@@ -291,8 +279,13 @@ status="Clear"
 }
 
 
-fetch(`https://transport-system-1-i84e.onrender.com/add_attendance?driver_name=${driver}&date=${date}&status=${status}`,{
+fetch(`${API}/add_attendance?driver_name=${driver}&date=${date}&status=${status}`,{
 method:"POST"
+})
+.then(()=>{
+
+loadAttendance()
+
 })
 
 }
@@ -301,7 +294,7 @@ method:"POST"
 
 function loadAttendance(){
 
-fetch("https://transport-system-1-i84e.onrender.com/get_attendance")
+fetch(API+"/get_attendance")
 
 .then(res=>res.json())
 
@@ -324,7 +317,6 @@ let driver=document.getElementById("driver").value
 let days=document.querySelectorAll(".day")
 
 let year=currentDate.getFullYear()
-
 let month=currentDate.getMonth()+1
 
 let m=String(month).padStart(2,"0")
@@ -385,8 +377,11 @@ updateMonth()
 }
 
 
+document.getElementById("driver").addEventListener("change",()=>{
 
-document.getElementById("driver").addEventListener("change",highlightDays)
+loadAttendance()
+
+})
 
 
 loadDrivers()
@@ -398,10 +393,9 @@ function logout(){
 
 localStorage.removeItem("loggedIn")
 
-window.location.href = "login.html"
+window.location.href="login.html"
 
 }
-
 
 </script>
 
