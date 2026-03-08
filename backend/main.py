@@ -8,9 +8,15 @@ from fastapi.responses import FileResponse
 from datetime import datetime, timedelta
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-
+from fastapi.staticfiles import StaticFiles
+import os
 
 app = FastAPI()
+
+models.Base.metadata.create_all(bind=engine)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+app.mount("/frontend", StaticFiles(directory=os.path.join(BASE_DIR, "frontend")), name="frontend")
 
 app.add_middleware(
     CORSMiddleware,

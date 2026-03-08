@@ -1,4 +1,4 @@
-const API = "https://transport-system-seven.vercel.app";
+const API = "http://127.0.0.1:8000";
 
 function addVehicle(){
 
@@ -23,7 +23,7 @@ loadVehicles();
 
 function loadVehicles(){
 
-fetch("https://transport-system-seven.vercel.app/api/get_vehicles")
+fetch("http://127.0.00.1:8000/get_vehicles")
 .then(res => res.json())
 .then(data => {
 
@@ -64,7 +64,7 @@ let name = document.getElementById("driver_name").value;
 let phone = document.getElementById("driver_phone").value;
 let license = document.getElementById("license_number").value;
 
-fetch("https://transport-system-seven.vercel.app/api/add_driver?name="+name+
+fetch("http://127.0.00.1:8000/add_driver?name="+name+
 "&phone="+phone+
 "&license_number="+license,{
 method:"POST"
@@ -81,7 +81,7 @@ loadDrivers();
 
 function loadDrivers(){
 
-fetch("https://transport-system-seven.vercel.app/api/get_drivers")
+fetch("http://127.0.00.1:8000/get_drivers")
 .then(res=>res.json())
 .then(data=>{
 
@@ -125,7 +125,7 @@ let payment = document.getElementById("customer_payment").value;
 let date = document.getElementById("trip_date").value
 let start = document.getElementById("start_time").value
 let end = document.getElementById("end_time").value
-fetch("https://transport-system-seven.vercel.app/api/add_trip?vehicle="+vehicle+
+fetch("http://127.0.00.1:8000/add_trip?vehicle="+vehicle+
 "&driver="+driver+
 "&material_type="+material+
 "&units="+units+
@@ -151,7 +151,7 @@ loadTrips();
 
 function loadTrips(){
 
-fetch("https://transport-system-seven.vercel.app/api/get_trips")
+fetch("http://127.0.00.1:8000/get_trips")
 .then(res=>res.json())
 .then(data=>{
 
@@ -217,7 +217,7 @@ loadFuel();
 
 function loadFuel(){
 
-fetch("https://transport-system-seven.vercel.app/api/get_fuel")
+fetch("http://127.0.00.1:8000/get_fuel")
 .then(res=>res.json())
 .then(data=>{
 
@@ -281,7 +281,7 @@ loadMaintenance();
 
 function loadMaintenance(){
 
-fetch("https://transport-system-seven.vercel.app/api/get_maintenance")
+fetch("http://127.0.00.1:8000/get_maintenance")
 .then(res=>res.json())
 .then(data=>{
 
@@ -320,7 +320,7 @@ let driver = document.getElementById("salary_driver").value;
 let amount = document.getElementById("salary_amount").value;
 let notes = document.getElementById("salary_notes").value;
 
-fetch("https://transport-system-seven.vercel.app/api/add_salary?driver_name="+driver+
+fetch("http://127.0.00.1:8000/add_salary?driver_name="+driver+
 "&amount="+amount+
 "&notes="+notes,{
 method:"POST"
@@ -345,7 +345,7 @@ method:"POST"
 
 function loadSalary(){
 
-fetch("https://transport-system-seven.vercel.app/api/get_salary")
+fetch("http://127.0.00.1:8000/get_salary")
 .then(res=>res.json())
 .then(data=>{
 
@@ -380,10 +380,10 @@ loadSalary();
 function loadDashboard(){
 
 Promise.all([
-fetch("https://transport-system-seven.vercel.app/api/get_trips").then(r=>r.json()),
-fetch("https://transport-system-seven.vercel.app/api/get_fuel").then(r=>r.json()),
-fetch("https://transport-system-seven.vercel.app/api/get_maintenance").then(r=>r.json()),
-fetch("https://transport-system-seven.vercel.app/api/get_salary").then(r=>r.json())
+fetch("http://127.0.00.1:8000/get_trips").then(r=>r.json()),
+fetch("http://127.0.00.1:8000/get_fuel").then(r=>r.json()),
+fetch("http://127.0.00.1:8000/get_maintenance").then(r=>r.json()),
+fetch("http://127.0.00.1:8000/get_salary").then(r=>r.json())
 ])
 .then(([trips,fuel,maintenance,salary])=>{
 
@@ -425,7 +425,7 @@ document.getElementById("profit").innerText = profit;
 loadDashboard();
 function downloadExcel(){
 
-window.open("https://transport-system-seven.vercel.app/api/export_excel")
+window.open("http://127.0.0.1:8000/export_excel")
 
 }
 
@@ -435,7 +435,7 @@ let driver=document.getElementById("driver").value
 let date=document.getElementById("date").value
 let status=document.getElementById("status").value
 
-fetch("https://transport-system-seven.vercel.app/api/add_attendance?driver_name="+driver+"&date="+date+"&status="+status,{
+fetch("http://127.0.0.1:8000/add_attendance?driver_name="+driver+"&date="+date+"&status="+status,{
 method:"POST"
 })
 
@@ -448,15 +448,15 @@ alert("Attendance saved")
 }
 
 function downloadFuel() {
-    window.open("https://transport-system-seven.vercel.app/api/export_fuel_excel");
+    window.open("http://127.0.0.1:8000/export_fuel_excel");
 }
 
 function downloadSalary() {
-    window.open("https://transport-system-seven.vercel.app/api/export_salary_excel");
+    window.open("http://127.0.0.1:8000/export_salary_excel");
 }
 
 function downloadMaintenance() {
-    window.open("https://transport-system-seven.vercel.app/api/export_maintenance_excel");
+    window.open("http://127.0.0.1:8000/export_maintenance_excel");
 }
 function logout(){
 

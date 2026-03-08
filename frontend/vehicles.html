@@ -86,7 +86,7 @@ window.location.href = "/frontend/login.html"
 
 <script>
 
-const API = "https://transport-system-seven.vercel.app/api"
+const API = "http://127.0.0.1:8000"
 
 
 
@@ -172,7 +172,7 @@ table.innerHTML += `
 
 function deleteVehicle(id){
 
-fetch("https://transport-system-seven.vercel.app/api/delete_vehicle/" + id,{
+fetch("API/delete_vehicle/" + id,{
 method:"DELETE"
 })
 .then(()=>{
@@ -192,7 +192,7 @@ function logout(){
 
 localStorage.removeItem("loggedIn")
 
-window.location.href = "login.html"
+window.location.href = "/frontend/login.html"
 
 }
 
