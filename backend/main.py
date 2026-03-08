@@ -288,3 +288,18 @@ def update_salary(id:int,driver_name:str,amount:float,notes:str="",salary_date:s
     db.commit()
 
     return {"message":"Salary updated"}
+
+@app.get("/get_attendance")
+def get_attendance(db:Session=Depends(get_db)):
+
+    attendance=db.query(models.Attendance).all()
+
+    result=[]
+    for a in attendance:
+        result.append({
+            "driver_name":a.driver_name,
+            "date":str(a.date),
+            "status":a.status
+        })
+
+    return result
