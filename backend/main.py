@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from .database import engine, SessionLocal
-from . import models
+from database import engine, SessionLocal
+import models
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from fastapi.responses import FileResponse
