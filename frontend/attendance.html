@@ -62,15 +62,6 @@ cursor:pointer;
 .halfday{background:#facc15;color:black;}
 .absent{background:#ef4444;}
 
-button{
-padding:8px 15px;
-background:#3b82f6;
-border:none;
-border-radius:6px;
-color:white;
-cursor:pointer;
-}
-
 </style>
 
 </head>
@@ -91,7 +82,7 @@ cursor:pointer;
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
 
-<button onclick="logout()">Logout</button>
+<button onclick="logout()" class="logout-btn">Logout</button>
 
 </div>
 
@@ -265,8 +256,6 @@ for(let date in tempAttendance){
 
 let a=tempAttendance[date]
 
-if(a.status==="Clear") continue
-
 requests.push(
 fetch(`${API}/add_attendance?driver_name=${a.driver_name}&date=${date}&status=${a.status}`,{
 method:"POST"
@@ -301,6 +290,7 @@ updateMonth()
 })
 
 }
+
 function highlightDays(){
 
 let driver=document.getElementById("driver").value
@@ -317,22 +307,23 @@ let day=d.innerText
 let date=`${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`
 
 d.classList.remove("present","halfday","absent")
+d.dataset.state=""
 
 attendanceData.forEach(a=>{
 
-if(a.driver_name === driver && a.date === date){
+if(a.driver_name===driver && a.date===date){
 
-if(a.status === "Present"){
+if(a.status==="Present"){
 d.classList.add("present")
 d.dataset.state="Present"
 }
 
-if(a.status === "Half"){
+if(a.status==="Half"){
 d.classList.add("halfday")
 d.dataset.state="Half"
 }
 
-if(a.status === "Absent"){
+if(a.status==="Absent"){
 d.classList.add("absent")
 d.dataset.state="Absent"
 }
@@ -344,6 +335,7 @@ d.dataset.state="Absent"
 })
 
 }
+
 function prevMonth(){
 currentDate.setMonth(currentDate.getMonth()-1)
 loadAttendance()
