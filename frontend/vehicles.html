@@ -2,12 +2,14 @@
 <html>
 
 <head>
+
 <title>Vehicles</title>
+
 <link rel="stylesheet" href="style.css">
 
 <script>
 if(localStorage.getItem("loggedIn") !== "true"){
-window.location.href = "login.html"
+window.location.href="login.html"
 }
 </script>
 
@@ -22,13 +24,13 @@ window.location.href = "login.html"
 <a href="dashboard.html">Dashboard</a>
 <a href="vehicles.html">Vehicles</a>
 <a href="drivers.html">Drivers</a>
-<a href="
-trips.html">Trips</a>
+<a href="trips.html">Trips</a>
 <a href="fuel.html">Fuel</a>
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
-<button onclick="logout()" class ="logout-btn">Logout</button>  
+
+<button onclick="logout()" class="logout-btn">Logout</button>
 
 </div>
 
@@ -69,7 +71,7 @@ trips.html">Trips</a>
 
 <h2>Vehicle List</h2>
 
-<table id="vehicle_table"border="1" style="margin-top:20px;">
+<table id="vehicle_table" border="1" style="margin-top:20px;">
 
 <tr>
 <th>Name</th>
@@ -84,22 +86,21 @@ trips.html">Trips</a>
 </div>
 
 
-
 <script>
 
-const API = "https://transport-system-1-i84e.onrender.com"
+const API="https://transport-system-1-i84e.onrender.com"
 
 
 
 function vehicleTypeChange(){
 
-let type = document.getElementById("vehicle_type").value
+let type=document.getElementById("vehicle_type").value
 
-if(type == "JCB"){
-document.getElementById("unit_box").style.display = "none"
+if(type=="JCB"){
+document.getElementById("unit_box").style.display="none"
 }
 else{
-document.getElementById("unit_box").style.display = "block"
+document.getElementById("unit_box").style.display="block"
 }
 
 }
@@ -108,13 +109,21 @@ document.getElementById("unit_box").style.display = "block"
 
 function addVehicle(){
 
-let name = document.getElementById("vehicle_name").value
-let number = document.getElementById("vehicle_number").value
-let type = document.getElementById("vehicle_type").value
-let unit = document.getElementById("unit_capacity").value
+let name=document.getElementById("vehicle_name").value
+let number=document.getElementById("vehicle_number").value
+let type=document.getElementById("vehicle_type").value
+let unit=document.getElementById("unit_capacity").value
 
+if(name=="" || number=="" || type==""){
+alert("Please fill all fields")
+return
+}
 
-fetch(API + "/add_vehicle?vehicle_name="+name+
+if(type=="JCB"){
+unit=""
+}
+
+fetch(API+"/add_vehicle?vehicle_name="+name+
 "&vehicle_number="+number+
 "&vehicle_type="+type+
 "&unit_capacity="+unit,{
@@ -124,6 +133,10 @@ method:"POST"
 .then(()=>{
 
 alert("Vehicle Added")
+
+document.getElementById("vehicle_name").value=""
+document.getElementById("vehicle_number").value=""
+document.getElementById("unit_capacity").value=""
 
 loadVehicles()
 
@@ -135,13 +148,13 @@ loadVehicles()
 
 function loadVehicles(){
 
-fetch(API + "/get_vehicles")
+fetch(API+"/get_vehicles")
 .then(r=>r.json())
 .then(data=>{
 
-let table = document.getElementById("vehicle_table")
+let table=document.getElementById("vehicle_table")
 
-table.innerHTML = `
+table.innerHTML=`
 <tr>
 <th>Name</th>
 <th>Number</th>
@@ -153,12 +166,12 @@ table.innerHTML = `
 
 data.forEach(v=>{
 
-table.innerHTML += `
+table.innerHTML+=`
 <tr>
 <td>${v.vehicle_name}</td>
 <td>${v.vehicle_number}</td>
 <td>${v.vehicle_type}</td>
-<td>${v.unit_capacity}</td>
+<td>${v.unit_capacity || "-"}</td>
 <td>
 <button onclick="deleteVehicle(${v.id})">Delete</button>
 </td>
@@ -171,14 +184,16 @@ table.innerHTML += `
 
 }
 
+
+
 function deleteVehicle(id){
 
-fetch("https://transport-system-1-i84e.onrender.com/delete_vehicle/" + id,{
+if(!confirm("Delete this vehicle?")) return
+
+fetch(API+"/delete_vehicle/"+id,{
 method:"DELETE"
 })
 .then(()=>{
-
-alert("Vehicle Deleted")
 
 loadVehicles()
 
@@ -186,16 +201,18 @@ loadVehicles()
 
 }
 
-loadVehicles()
 
 
 function logout(){
 
 localStorage.removeItem("loggedIn")
-
-window.location.href = "login.html"
+window.location.href="login.html"
 
 }
+
+
+
+loadVehicles()
 
 </script>
 

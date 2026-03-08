@@ -1,5 +1,7 @@
 const API = "https://transport-system-1-i84e.onrender.com";
 
+
+// VEHICLES
 function addVehicle(){
 
 let name = document.getElementById("vehicle_name").value;
@@ -7,14 +9,14 @@ let number = document.getElementById("vehicle_number").value;
 let type = document.getElementById("vehicle_type").value;
 let unit = document.getElementById("unit_capacity").value;
 
-fetch(API + "/add_vehicle?vehicle_name="+name+
+fetch(API+"/add_vehicle?vehicle_name="+name+
 "&vehicle_number="+number+
 "&vehicle_type="+type+
 "&unit_capacity="+unit,{
 method:"POST"
 })
 .then(res=>res.json())
-.then(data=>{
+.then(()=>{
 alert("Vehicle Added");
 loadVehicles();
 });
@@ -23,13 +25,13 @@ loadVehicles();
 
 function loadVehicles(){
 
-fetch("https://transport-system-1-i84e.onrender.com/get_vehicles")
-.then(res => res.json())
-.then(data => {
+fetch(API+"/get_vehicles")
+.then(res=>res.json())
+.then(data=>{
 
-let table = document.getElementById("vehicle_table");
+let table=document.getElementById("vehicle_table");
 
-table.innerHTML = `
+table.innerHTML=`
 <tr>
 <th>Name</th>
 <th>Number</th>
@@ -38,9 +40,9 @@ table.innerHTML = `
 </tr>
 `;
 
-data.forEach(v => {
+data.forEach(v=>{
 
-let row = `
+table.innerHTML+=`
 <tr>
 <td>${v.vehicle_name}</td>
 <td>${v.vehicle_number}</td>
@@ -49,45 +51,44 @@ let row = `
 </tr>
 `;
 
-table.innerHTML += row;
-
 });
 
 });
 
 }
+
 loadVehicles();
 
+
+// DRIVERS
 function addDriver(){
 
-let name = document.getElementById("driver_name").value;
-let phone = document.getElementById("driver_phone").value;
-let license = document.getElementById("license_number").value;
+let name=document.getElementById("driver_name").value;
+let phone=document.getElementById("driver_phone").value;
+let license=document.getElementById("license_number").value;
 
-fetch("https://transport-system-1-i84e.onrender.com/add_driver?name="+name+
+fetch(API+"/add_driver?name="+name+
 "&phone="+phone+
 "&license_number="+license,{
 method:"POST"
 })
 .then(res=>res.json())
-.then(data=>{
+.then(()=>{
 alert("Driver Added");
 loadDrivers();
 });
 
 }
 
-
-
 function loadDrivers(){
 
-fetch("https://transport-system-1-i84e.onrender.com/get_drivers")
+fetch(API+"/get_drivers")
 .then(res=>res.json())
 .then(data=>{
 
-let table = document.getElementById("driver_table");
+let table=document.getElementById("driver_table");
 
-table.innerHTML = `
+table.innerHTML=`
 <tr>
 <th>Name</th>
 <th>Phone</th>
@@ -97,7 +98,7 @@ table.innerHTML = `
 
 data.forEach(d=>{
 
-table.innerHTML += `
+table.innerHTML+=`
 <tr>
 <td>${d.name}</td>
 <td>${d.phone}</td>
@@ -110,22 +111,30 @@ table.innerHTML += `
 });
 
 }
+
 loadDrivers();
+
+
+// TRIPS
 function addTrip(){
 
-let vehicle = document.getElementById("trip_vehicle").value;
-let driver = document.getElementById("trip_driver").value;
-let material = document.getElementById("material_type").value;
-let units = document.getElementById("trip_units").value;
-let loading = document.getElementById("loading_location").value;
-let delivery = document.getElementById("delivery_location").value;
-let customer = document.getElementById("trip_customer").value;
-let loading_cost = document.getElementById("loading_cost").value;
-let payment = document.getElementById("customer_payment").value;
-let date = document.getElementById("trip_date").value
-let start = document.getElementById("start_time").value
-let end = document.getElementById("end_time").value
-fetch("https://transport-system-1-i84e.onrender.com/add_trip?vehicle="+vehicle+
+let vehicle=document.getElementById("trip_vehicle").value;
+let driver=document.getElementById("trip_driver").value;
+let material=document.getElementById("material_type").value;
+let units=document.getElementById("trip_units").value;
+let loading=document.getElementById("loading_location").value;
+let delivery=document.getElementById("delivery_location").value;
+let customer=document.getElementById("trip_customer").value;
+let loading_cost=document.getElementById("loading_cost").value;
+let payment=document.getElementById("customer_payment").value;
+
+let start_date=document.getElementById("start_date").value;
+let end_date=document.getElementById("end_date").value;
+
+let start=document.getElementById("start_time").value;
+let end=document.getElementById("end_time").value;
+
+fetch(API+"/add_trip?vehicle="+vehicle+
 "&driver="+driver+
 "&material_type="+material+
 "&units="+units+
@@ -134,30 +143,29 @@ fetch("https://transport-system-1-i84e.onrender.com/add_trip?vehicle="+vehicle+
 "&customer="+customer+
 "&loading_cost="+loading_cost+
 "&customer_payment="+payment+
-"&trip_date="+date+
+"&start_date="+start_date+
+"&end_date="+end_date+
 "&start_time="+start+
 "&end_time="+end,{
 method:"POST"
 })
 .then(res=>res.json())
-.then(data=>{
+.then(()=>{
 alert("Trip Added");
 loadTrips();
 });
 
 }
 
-
-
 function loadTrips(){
 
-fetch("https://transport-system-1-i84e.onrender.com/get_trips")
+fetch(API+"/get_trips")
 .then(res=>res.json())
 .then(data=>{
 
-let table = document.getElementById("trip_table");
+let table=document.getElementById("trip_table");
 
-table.innerHTML = `
+table.innerHTML=`
 <tr>
 <th>Vehicle</th>
 <th>Driver</th>
@@ -170,7 +178,7 @@ table.innerHTML = `
 
 data.forEach(t=>{
 
-table.innerHTML += `
+table.innerHTML+=`
 <tr>
 <td>${t.vehicle}</td>
 <td>${t.driver}</td>
@@ -189,15 +197,18 @@ table.innerHTML += `
 
 loadTrips();
 
+
+// FUEL
 function addFuel(){
 
-let vehicle = document.getElementById("fuel_vehicle").value;
-let type = document.getElementById("fuel_type").value;
-let litres = document.getElementById("fuel_litres").value;
-let rate = document.getElementById("fuel_rate").value;
-let station = document.getElementById("fuel_station").value;
-let date = document.getElementById("fuel_date").value
-fetch(API + "/add_fuel?vehicle="+vehicle+
+let vehicle=document.getElementById("fuel_vehicle").value;
+let type=document.getElementById("fuel_type").value;
+let litres=document.getElementById("fuel_litres").value;
+let rate=document.getElementById("fuel_rate").value;
+let station=document.getElementById("fuel_station").value;
+let date=document.getElementById("fuel_date").value;
+
+fetch(API+"/add_fuel?vehicle="+vehicle+
 "&fuel_type="+type+
 "&litres="+litres+
 "&rate="+rate+
@@ -205,25 +216,22 @@ fetch(API + "/add_fuel?vehicle="+vehicle+
 "&fuel_date="+date,{
 method:"POST"
 })
-.then(res=>res.json())
-.then(data=>{
+.then(()=>{
 alert("Fuel Added");
 loadFuel();
 });
 
 }
 
-
-
 function loadFuel(){
 
-fetch("https://transport-system-1-i84e.onrender.com/get_fuel")
+fetch(API+"/get_fuel")
 .then(res=>res.json())
 .then(data=>{
 
-let table = document.getElementById("fuel_table");
+let table=document.getElementById("fuel_table");
 
-table.innerHTML = `
+table.innerHTML=`
 <tr>
 <th>Vehicle</th>
 <th>Type</th>
@@ -236,7 +244,7 @@ table.innerHTML = `
 
 data.forEach(f=>{
 
-table.innerHTML += `
+table.innerHTML+=`
 <tr>
 <td>${f.vehicle}</td>
 <td>${f.fuel_type}</td>
@@ -255,103 +263,37 @@ table.innerHTML += `
 
 loadFuel();
 
-function addMaintenance(){
 
-let vehicle = document.getElementById("maint_vehicle").value;
-let type = document.getElementById("maint_type").value;
-let cost = document.getElementById("maint_cost").value;
-let workshop = document.getElementById("maint_workshop").value;
-let date = document.getElementById("maintenance_date").value
-fetch(API + "/add_maintenance?vehicle="+vehicle+
-"&maintenance_type="+type+
-"&cost="+cost+
-"&workshop="+workshop+
-"&maintenance_date="+date,{
-method:"POST"
-})
-.then(res=>res.json())
-.then(data=>{
-alert("Maintenance Added");
-loadMaintenance();
-});
-
-}
-
-
-
-function loadMaintenance(){
-
-fetch("https://transport-system-1-i84e.onrender.com/get_maintenance")
-.then(res=>res.json())
-.then(data=>{
-
-let table = document.getElementById("maintenance_table");
-
-table.innerHTML = `
-<tr>
-<th>Vehicle</th>
-<th>Type</th>
-<th>Cost</th>
-<th>Workshop</th>
-</tr>
-`;
-
-data.forEach(m=>{
-
-table.innerHTML += `
-<tr>
-<td>${m.vehicle}</td>
-<td>${m.maintenance_type}</td>
-<td>${m.cost}</td>
-<td>${m.workshop}</td>
-</tr>
-`;
-
-});
-
-});
-
-}
-
-loadMaintenance();
+// SALARY
 function addSalary(){
 
-let driver = document.getElementById("salary_driver").value;
-let amount = document.getElementById("salary_amount").value;
-let notes = document.getElementById("salary_notes").value;
+let driver=document.getElementById("salary_driver").value;
+let amount=document.getElementById("salary_amount").value;
+let notes=document.getElementById("salary_notes").value;
+let date=document.getElementById("salary_date").value;
 
-fetch("https://transport-system-1-i84e.onrender.com/add_salary?driver_name="+driver+
-"&amount="+amount+
-"&notes="+notes,{
-method:"POST"
-})
-.then(res=>res.json())
-.then(data=>{
-alert("Salary Added");
-loadSalary();
-});
-let date = document.getElementById("salary_date").value
-
-fetch(API + "/add_salary?driver_name="+driver+
+fetch(API+"/add_salary?driver_name="+driver+
 "&amount="+amount+
 "&notes="+notes+
 "&salary_date="+date,{
 method:"POST"
 })
+.then(()=>{
+alert("Salary Added");
+loadSalary();
+});
 
 }
 
-
-
 function loadSalary(){
 
-fetch("https://transport-system-1-i84e.onrender.com/get_salary")
+fetch(API+"/get_salary")
 .then(res=>res.json())
 .then(data=>{
 
-let table = document.getElementById("salary_table");
+let table=document.getElementById("salary_table");
 
-table.innerHTML = `
+table.innerHTML=`
 <tr>
 <th>Driver</th>
 <th>Amount</th>
@@ -361,7 +303,7 @@ table.innerHTML = `
 
 data.forEach(s=>{
 
-table.innerHTML += `
+table.innerHTML+=`
 <tr>
 <td>${s.driver_name}</td>
 <td>${s.amount}</td>
@@ -377,132 +319,68 @@ table.innerHTML += `
 
 loadSalary();
 
+
+// DASHBOARD
 function loadDashboard(){
 
 Promise.all([
-fetch("https://transport-system-1-i84e.onrender.com/get_trips").then(r=>r.json()),
-fetch("https://transport-system-1-i84e.onrender.com/get_fuel").then(r=>r.json()),
-fetch("https://transport-system-1-i84e.onrender.com/get_maintenance").then(r=>r.json()),
-fetch("https://transport-system-1-i84e.onrender.com/get_salary").then(r=>r.json())
+fetch(API+"/get_trips").then(r=>r.json()),
+fetch(API+"/get_fuel").then(r=>r.json()),
+fetch(API+"/get_maintenance").then(r=>r.json()),
+fetch(API+"/get_salary").then(r=>r.json())
 ])
 .then(([trips,fuel,maintenance,salary])=>{
 
-let totalTrips = trips.length;
+let totalTrips=trips.length;
 
-let income = 0;
-trips.forEach(t=>{
-income += t.customer_payment;
-});
+let income=0;
+trips.forEach(t=>income+=t.customer_payment);
 
-let fuelCost = 0;
-fuel.forEach(f=>{
-fuelCost += f.total_cost;
-});
+let fuelCost=0;
+fuel.forEach(f=>fuelCost+=f.total_cost);
 
-let maintenanceCost = 0;
-maintenance.forEach(m=>{
-maintenanceCost += m.cost;
-});
+let maintenanceCost=0;
+maintenance.forEach(m=>maintenanceCost+=m.cost);
 
-let salaryCost = 0;
-salary.forEach(s=>{
-salaryCost += s.amount;
-});
+let salaryCost=0;
+salary.forEach(s=>salaryCost+=s.amount);
 
-let profit = income - fuelCost - maintenanceCost - salaryCost;
+let profit=income-fuelCost-maintenanceCost-salaryCost;
 
-document.getElementById("total_trips").innerText = totalTrips;
-document.getElementById("total_income").innerText = income;
-document.getElementById("fuel_expense").innerText = fuelCost;
-document.getElementById("maintenance_expense").innerText = maintenanceCost;
-document.getElementById("salary_expense").innerText = salaryCost;
-document.getElementById("profit").innerText = profit;
+document.getElementById("total_trips").innerText=totalTrips;
+document.getElementById("total_income").innerText=income;
+document.getElementById("fuel_expense").innerText=fuelCost;
+document.getElementById("maintenance_expense").innerText=maintenanceCost;
+document.getElementById("salary_expense").innerText=salaryCost;
+document.getElementById("profit").innerText=profit;
 
 });
 
 }
 
 loadDashboard();
+
+
+// EXPORTS
 function downloadExcel(){
-
-window.open("https://transport-system-1-i84e.onrender.com/export_excel")
-
+window.open(API+"/export_excel")
 }
 
-function markAttendance(){
-
-let driver=document.getElementById("driver").value
-let date=document.getElementById("date").value
-let status=document.getElementById("status").value
-
-fetch("https://transport-system-1-i84e.onrender.com/add_attendance?driver_name="+driver+"&date="+date+"&status="+status,{
-method:"POST"
-})
-
-.then(()=>{
-
-alert("Attendance saved")
-
-})
-
+function downloadFuel(){
+window.open(API+"/export_fuel_excel")
 }
 
-function downloadFuel() {
-    window.open("https://transport-system-1-i84e.onrender.com/export_fuel_excel");
+function downloadSalary(){
+window.open(API+"/export_salary_excel")
 }
 
-function downloadSalary() {
-    window.open("https://transport-system-1-i84e.onrender.com/export_salary_excel");
-}
-
-function downloadMaintenance() {
-    window.open("https://transport-system-1-i84e.onrender.com/export_maintenance_excel");
-}
-function logout(){
-
-    localStorage.removeItem("loggedIn")
-    window.location.href = "login.html"
-
-}
-
-let tempAttendance={}
-
-function saveAttendance(){
-
-let requests=[]
-
-for(let date in tempAttendance){
-
-let a=tempAttendance[date]
-
-requests.push(
-
-fetch(`https://transport-system-1-i84e.onrender.com/add_attendance?driver_name=${a.driver_name}&date=${date}&status=${a.status}`,{
-method:"POST"
-})
-
-)
-
-}
-
-Promise.all(requests)
-
-.then(()=>{
-
-alert("Attendance saved successfully")
-
-tempAttendance={}
-
-loadAttendance()
-
-})
-
-}
 function downloadAttendance(){
+window.open(API+"/export_attendance_excel")
+}
 
-window.open(
-"https://transport-system-1-i84e.onrender.com/export_attendance_excel",
-"_blank"
-)
 
+// LOGOUT
+function logout(){
+localStorage.removeItem("loggedIn")
+window.location.href="login.html"
 }

@@ -2,6 +2,7 @@
 <html>
 
 <head>
+
 <title>Dashboard</title>
 
 <link rel="stylesheet" href="style.css">
@@ -11,6 +12,7 @@ if(localStorage.getItem("loggedIn") !== "true"){
 window.location.href = "login.html"
 }
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -29,7 +31,9 @@ window.location.href = "login.html"
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
-<button onclick="logout()" class ="logout-btn">Logout</button>
+
+<button onclick="logout()" class="logout-btn">Logout</button>
+
 </div>
 
 
@@ -75,13 +79,11 @@ window.location.href = "login.html"
 <hr>
 
 <h2>Monthly Income</h2>
-
 <canvas id="monthlyChart"></canvas>
 
 <hr>
 
 <h2>Vehicle Profit</h2>
-
 <canvas id="vehicleChart"></canvas>
 
 </div>
@@ -91,8 +93,13 @@ window.location.href = "login.html"
 
 const API = "https://transport-system-1-i84e.onrender.com"
 
+let monthlyChart
+let vehicleChart
 
 
+function formatMoney(num){
+return "₹" + num.toLocaleString("en-IN")
+}
 
 
 function loadDashboard(){
@@ -123,17 +130,19 @@ salary.forEach(s=> salaryCost += s.amount)
 let profit = income - fuelCost - maintenanceCost - salaryCost
 
 document.getElementById("total_trips").innerText = totalTrips
-document.getElementById("total_income").innerText = income
-document.getElementById("fuel_expense").innerText = fuelCost
-document.getElementById("maintenance_expense").innerText = maintenanceCost
-document.getElementById("salary_expense").innerText = salaryCost
-document.getElementById("profit").innerText = profit
+document.getElementById("total_income").innerText = formatMoney(income)
+document.getElementById("fuel_expense").innerText = formatMoney(fuelCost)
+document.getElementById("maintenance_expense").innerText = formatMoney(maintenanceCost)
+document.getElementById("salary_expense").innerText = formatMoney(salaryCost)
+document.getElementById("profit").innerText = formatMoney(profit)
 
 })
 
+.catch(()=>{
+console.log("Dashboard load failed")
+})
+
 }
-
-
 
 
 
@@ -146,7 +155,9 @@ fetch(API+"/monthly_report")
 let labels = Object.keys(data)
 let values = Object.values(data)
 
-new Chart(document.getElementById("monthlyChart"),{
+if(monthlyChart) monthlyChart.destroy()
+
+monthlyChart = new Chart(document.getElementById("monthlyChart"),{
 
 type:"bar",
 
@@ -166,8 +177,6 @@ data:values
 
 
 
-
-
 function loadVehicleChart(){
 
 fetch(API+"/vehicle_report")
@@ -177,7 +186,9 @@ fetch(API+"/vehicle_report")
 let labels = Object.keys(data)
 let values = Object.values(data)
 
-new Chart(document.getElementById("vehicleChart"),{
+if(vehicleChart) vehicleChart.destroy()
+
+vehicleChart = new Chart(document.getElementById("vehicleChart"),{
 
 type:"pie",
 
@@ -197,14 +208,9 @@ data:values
 
 
 
-
-
 function downloadExcel(){
-
 window.open(API+"/export_excel")
 }
-
-
 
 
 
@@ -213,14 +219,13 @@ loadMonthlyChart()
 loadVehicleChart()
 
 
+
 function logout(){
 
 localStorage.removeItem("loggedIn")
-
 window.location.href = "login.html"
 
 }
-
 
 </script>
 

@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String, Date, Float
+from sqlalchemy import Column, Integer, String, Date, Float, Time
 from database import Base
 
 
-# USERS (login)
+# USERS (LOGIN)
 class User(Base):
     __tablename__ = "users"
 
@@ -16,6 +16,7 @@ class Vehicle(Base):
     __tablename__ = "vehicles"
 
     id = Column(Integer, primary_key=True, index=True)
+
     vehicle_name = Column(String)
     vehicle_number = Column(String)
     vehicle_type = Column(String)   # lorry / jcb
@@ -52,33 +53,32 @@ class Customer(Base):
 
 
 # TRIPS
-from sqlalchemy import Column, Integer, String, Float, Date, Time
-
 class Trip(Base):
+    __tablename__ = "trips"
 
-    __tablename__="trips"
+    id = Column(Integer, primary_key=True, index=True)
 
-    id=Column(Integer,primary_key=True,index=True)
+    vehicle = Column(String)
+    driver = Column(String)
 
-    vehicle=Column(String)
-    driver=Column(String)
+    material_type = Column(String)
+    units = Column(Float)
 
-    material_type=Column(String)
-    units=Column(Float)
+    loading_location = Column(String)
+    delivery_location = Column(String)
 
-    loading_location=Column(String)
-    delivery_location=Column(String)
+    customer = Column(String)
 
-    customer=Column(String)
+    loading_cost = Column(Float)
+    customer_payment = Column(Float)
 
-    loading_cost=Column(Float)
-    customer_payment=Column(Float)
+    start_date = Column(Date)
+    end_date = Column(Date)
 
-    start_date=Column(Date)
-    end_date=Column(Date)
+    start_time = Column(Time)
+    end_time = Column(Time)
 
-    start_time=Column(Time)
-    end_time=Column(Time)
+
 # FUEL
 class Fuel(Base):
     __tablename__ = "fuel"
@@ -105,7 +105,6 @@ class Maintenance(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     vehicle = Column(String)
-
     maintenance_type = Column(String)
 
     cost = Column(Float)
@@ -129,12 +128,9 @@ class Salary(Base):
 
     notes = Column(String)
 
-from sqlalchemy import Column, Integer, String, Date
-from database import Base
 
-
+# ATTENDANCE
 class Attendance(Base):
-
     __tablename__ = "attendance"
 
     id = Column(Integer, primary_key=True, index=True)

@@ -96,7 +96,6 @@ cursor:pointer;
 </div>
 
 
-
 <div class="content">
 
 <h1>Driver Attendance</h1>
@@ -110,7 +109,6 @@ cursor:pointer;
 
 </div>
 
-
 <div class="month-nav">
 
 <button onclick="prevMonth()">◀</button>
@@ -120,7 +118,6 @@ cursor:pointer;
 <button onclick="nextMonth()">▶</button>
 
 </div>
-
 
 <div class="calendar-header">
 <div>Sun</div>
@@ -132,11 +129,11 @@ cursor:pointer;
 <div>Sat</div>
 </div>
 
-
 <div class="calendar" id="calendar"></div>
+
 <br><br>
+
 <button onclick="downloadAttendance()">Download Excel</button>
-<br><br>
 
 </div>
 
@@ -279,6 +276,8 @@ for(let date in tempAttendance){
 
 let a=tempAttendance[date]
 
+if(a.status==="Clear") continue
+
 requests.push(
 
 fetch(`${API}/add_attendance?driver_name=${a.driver_name}&date=${date}&status=${a.status}`,{
@@ -335,14 +334,26 @@ let day=d.innerText
 let date=`${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`
 
 d.classList.remove("present","halfday","absent")
+d.dataset.state=""
 
 attendanceData.forEach(a=>{
 
 if(a.driver_name===driver && a.date.startsWith(date)){
 
-if(a.status==="Present") d.classList.add("present")
-if(a.status==="Half") d.classList.add("halfday")
-if(a.status==="Absent") d.classList.add("absent")
+if(a.status==="Present"){
+d.classList.add("present")
+d.dataset.state="Present"
+}
+
+if(a.status==="Half"){
+d.classList.add("halfday")
+d.dataset.state="Half"
+}
+
+if(a.status==="Absent"){
+d.classList.add("absent")
+d.dataset.state="Absent"
+}
 
 }
 
@@ -360,6 +371,10 @@ updateMonth()
 function nextMonth(){
 currentDate.setMonth(currentDate.getMonth()+1)
 updateMonth()
+}
+
+function downloadAttendance(){
+window.open(API+"/export_attendance_excel","_blank")
 }
 
 document.getElementById("driver").addEventListener("change",loadAttendance)

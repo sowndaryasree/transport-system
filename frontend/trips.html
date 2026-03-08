@@ -7,7 +7,7 @@
 
 <script>
 if(localStorage.getItem("loggedIn") !== "true"){
-window.location.href = "login.html"
+window.location.href="login.html"
 }
 </script>
 
@@ -16,9 +16,10 @@ window.location.href = "login.html"
 <body>
 
 <div class="sidebar">
+
 <h2>Transport</h2>
 
-<a href="attendance.html">Dashboard</a>
+<a href="dashboard.html">Dashboard</a>
 <a href="vehicles.html">Vehicles</a>
 <a href="drivers.html">Drivers</a>
 <a href="trips.html">Trips</a>
@@ -26,7 +27,8 @@ window.location.href = "login.html"
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
-<button onclick="logout()" class ="logout-btn">Logout</button>
+
+<button onclick="logout()" class="logout-btn">Logout</button>
 
 </div>
 
@@ -44,8 +46,6 @@ window.location.href = "login.html"
 <select id="trip_driver"></select>
 
 <br><br>
-
-<!-- LORRY FIELDS -->
 
 <div id="lorry_fields">
 
@@ -82,8 +82,6 @@ window.location.href = "login.html"
 </div>
 
 
-<!-- JCB FIELDS -->
-
 <div id="jcb_fields" style="display:none">
 
 <label>Work Type</label>
@@ -114,7 +112,6 @@ window.location.href = "login.html"
 <br><br>
 
 </div>
-
 
 <input id="trip_customer" placeholder="Customer Name">
 
@@ -155,10 +152,8 @@ window.location.href = "login.html"
 </table>
 
 <br><br>
+
 <button onclick="downloadExcel()">Download Excel</button>
-
-
-<br><br>
 
 </div>
 
@@ -167,9 +162,11 @@ window.location.href = "login.html"
 
 const API="https://transport-system-1-i84e.onrender.com"
 
+
 function downloadExcel(){
-window.open(API + "/export_trips_excel","_blank")
+window.open(API+"/export_trips_excel")
 }
+
 
 function loadVehicles(){
 
@@ -179,10 +176,12 @@ fetch(API+"/get_vehicles")
 
 let select=document.getElementById("trip_vehicle")
 
+select.innerHTML="<option value=''>Select Vehicle</option>"
+
 data.forEach(v=>{
 
 select.innerHTML+=`
-<option value="${v.vehicle_type}">
+<option value="${v.vehicle_name}" data-type="${v.vehicle_type}">
 ${v.vehicle_name}
 </option>
 `
@@ -192,7 +191,6 @@ ${v.vehicle_name}
 })
 
 }
-
 
 
 function loadDrivers(){
@@ -212,10 +210,10 @@ select.innerHTML+=`<option>${d.name}</option>`
 }
 
 
-
 function vehicleChange(){
 
-let type=document.getElementById("trip_vehicle").value
+let select=document.getElementById("trip_vehicle")
+let type=select.options[select.selectedIndex].dataset.type
 
 if(type=="JCB"){
 
@@ -232,7 +230,6 @@ document.getElementById("jcb_fields").style.display="none"
 }
 
 
-
 function materialChange(){
 
 let m=document.getElementById("material_type").value
@@ -244,7 +241,6 @@ document.getElementById("manual_material").style.display="none"
 }
 
 }
-
 
 
 function workChange(){
@@ -260,7 +256,6 @@ document.getElementById("manual_work").style.display="none"
 }
 
 
-
 function addTrip(){
 
 let vehicle=document.getElementById("trip_vehicle").value
@@ -273,10 +268,21 @@ let start_time=document.getElementById("start_time").value
 let end_time=document.getElementById("end_time").value
 
 let material=document.getElementById("material_type").value
+let manual_material=document.getElementById("manual_material").value
+
+if(material=="Other"){
+material=manual_material
+}
+
 let units=document.getElementById("trip_units").value
 let loading=document.getElementById("loading_location").value
 let delivery=document.getElementById("delivery_location").value
 let loading_cost=document.getElementById("loading_cost").value
+
+if(vehicle=="" || driver=="" || customer==""){
+alert("Please fill required fields")
+return
+}
 
 fetch(API+"/add_trip?vehicle="+vehicle+
 "&driver="+driver+
@@ -300,7 +306,6 @@ loadTrips()
 })
 
 }
-
 
 
 function loadTrips(){
@@ -345,37 +350,32 @@ table.innerHTML+=`
 
 }
 
+
 function deleteTrip(id){
 
-fetch("https://transport-system-1-i84e.onrender.com/delete_trip/" + id,{
+if(!confirm("Delete this trip?")) return
+
+fetch(API+"/delete_trip/"+id,{
 method:"DELETE"
 })
 .then(()=>{
-
-alert("Trip Deleted")
-
 loadTrips()
-
 })
 
 }
-
-
-
-
-loadVehicles()
-loadDrivers()
-loadTrips()
-downloadExcel()
 
 
 function logout(){
 
 localStorage.removeItem("loggedIn")
-
-window.location.href = "login.html"
+window.location.href="login.html"
 
 }
+
+
+loadVehicles()
+loadDrivers()
+loadTrips()
 
 </script>
 

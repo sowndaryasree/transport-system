@@ -2,7 +2,9 @@
 <html>
 
 <head>
+
 <title>Maintenance</title>
+
 <link rel="stylesheet" href="style.css">
 
 <script>
@@ -27,7 +29,8 @@ window.location.href = "login.html"
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
-<button onclick="logout()" class ="logout-btn">Logout</button>
+
+<button onclick="logout()" class="logout-btn">Logout</button>
 
 </div>
 
@@ -51,7 +54,11 @@ window.location.href = "login.html"
 <input id="maint_workshop" placeholder="Workshop">
 
 <br><br>
+
 <input type="date" id="maintenance_date">
+
+<br><br>
+
 <button onclick="addMaintenance()">Add Maintenance</button>
 
 <hr>
@@ -65,22 +72,22 @@ window.location.href = "login.html"
 <th>Type</th>
 <th>Cost</th>
 <th>Workshop</th>
+<th>Date</th>
 <th>Delete</th>
 </tr>
 
 </table>
+
 <br><br>
 
 <button onclick="downloadMaintenance()">Download Excel</button>
 
-<br><br>
 </div>
 
 
 <script>
 
 const API = "https://transport-system-1-i84e.onrender.com"
-
 
 
 function loadVehicleDropdown(){
@@ -91,12 +98,14 @@ fetch(API + "/get_vehicles")
 
 let select = document.getElementById("maint_vehicle")
 
-select.innerHTML = "<option>Select Vehicle</option>"
+select.innerHTML = "<option value=''>Select Vehicle</option>"
 
 data.forEach(v=>{
 
 select.innerHTML += `
-<option>${v.vehicle_name}</option>
+<option value="${v.vehicle_name}">
+${v.vehicle_name}
+</option>
 `
 
 })
@@ -113,16 +122,28 @@ let vehicle = document.getElementById("maint_vehicle").value
 let type = document.getElementById("maint_type").value
 let cost = document.getElementById("maint_cost").value
 let workshop = document.getElementById("maint_workshop").value
+let date = document.getElementById("maintenance_date").value
+
+if(vehicle=="" || type=="" || cost==""){
+alert("Please fill required fields")
+return
+}
 
 fetch(API + "/add_maintenance?vehicle="+vehicle+
 "&maintenance_type="+type+
 "&cost="+cost+
-"&workshop="+workshop,{
+"&workshop="+workshop+
+"&maintenance_date="+date,{
 method:"POST"
 })
+
 .then(()=>{
 
 alert("Maintenance Added")
+
+document.getElementById("maint_type").value=""
+document.getElementById("maint_cost").value=""
+document.getElementById("maint_workshop").value=""
 
 loadMaintenance()
 
@@ -146,6 +167,7 @@ table.innerHTML = `
 <th>Type</th>
 <th>Cost</th>
 <th>Workshop</th>
+<th>Date</th>
 <th>Delete</th>
 </tr>
 `
@@ -158,6 +180,7 @@ table.innerHTML += `
 <td>${m.maintenance_type}</td>
 <td>${m.cost}</td>
 <td>${m.workshop}</td>
+<td>${m.maintenance_date || "-"}</td>
 <td>
 <button onclick="deleteMaintenance(${m.id})">Delete</button>
 </td>
@@ -174,6 +197,8 @@ table.innerHTML += `
 
 function deleteMaintenance(id){
 
+if(!confirm("Delete this record?")) return
+
 fetch(API + "/delete_maintenance/"+id,{
 method:"DELETE"
 })
@@ -187,8 +212,12 @@ loadMaintenance()
 
 
 
-loadVehicleDropdown()
-loadMaintenance()
+function downloadMaintenance(){
+
+window.open(API + "/export_maintenance_excel")
+
+}
+
 
 
 function logout(){
@@ -198,6 +227,10 @@ localStorage.removeItem("loggedIn")
 window.location.href = "login.html"
 
 }
+
+
+loadVehicleDropdown()
+loadMaintenance()
 
 </script>
 

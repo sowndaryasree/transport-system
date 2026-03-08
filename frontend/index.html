@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <title>Sowndarya Sree Transport</title>
+
 <link rel="stylesheet" href="style.css">
+
+<script>
+if(localStorage.getItem("loggedIn") !== "true"){
+window.location.href = "login.html";
+}
+</script>
+
 </head>
 
 <body>
 
-<script>
-if(localStorage.getItem("loggedIn") !== "true"){
-    window.location.href = "login.html";
-}
-</script>
-  
 <div class="sidebar">
+
 <h2>Transport</h2>
 
 <a href="dashboard.html">Dashboard</a>
@@ -24,14 +29,45 @@ if(localStorage.getItem("loggedIn") !== "true"){
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
+
 <button onclick="logout()">Logout</button>
 
 </div>
 
+
 <div class="main">
+
 <h1>Sowndarya Sree Transport</h1>
+
 <p>Welcome to Transport Management System</p>
+
+<br>
+
+<div class="card">
+
+<h3>System Overview</h3>
+
+<p>
+This system helps manage vehicles, drivers, trips, fuel expenses,
+maintenance records, salary payments and driver attendance.
+</p>
+
 </div>
+
+</div>
+
+
+<script>
+
+function logout(){
+
+localStorage.removeItem("loggedIn")
+
+window.location.href = "login.html"
+
+}
+
+</script>
 
 </body>
 </html>

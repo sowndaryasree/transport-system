@@ -2,8 +2,11 @@
 <html>
 
 <head>
+
 <title>Fuel</title>
+
 <link rel="stylesheet" href="style.css">
+
 <script>
 if(localStorage.getItem("loggedIn") !== "true"){
 window.location.href = "login.html"
@@ -18,7 +21,6 @@ window.location.href = "login.html"
 
 <h2>Transport</h2>
 
-
 <a href="dashboard.html">Dashboard</a>
 <a href="vehicles.html">Vehicles</a>
 <a href="drivers.html">Drivers</a>
@@ -27,7 +29,8 @@ window.location.href = "login.html"
 <a href="maintenance.html">Maintenance</a>
 <a href="salary.html">Salary</a>
 <a href="attendance.html">Attendance</a>
-<button onclick="logout()" class ="logout-btn">Logout</button>
+
+<button onclick="logout()" class="logout-btn">Logout</button>
 
 </div>
 
@@ -36,18 +39,14 @@ window.location.href = "login.html"
 
 <h1>Add Fuel</h1>
 
-
-
 <select id="fuel_vehicle"></select>
 
 <br><br>
 
 <select id="fuel_type">
-
 <option value="">Fuel Type</option>
 <option value="Diesel">Diesel</option>
 <option value="Petrol">Petrol</option>
-
 </select>
 
 <br><br>
@@ -63,7 +62,11 @@ window.location.href = "login.html"
 <input id="fuel_station" placeholder="Fuel Station">
 
 <br><br>
+
 <input type="date" id="fuel_date">
+
+<br><br>
+
 <button onclick="addFuel()">Add Fuel</button>
 
 <hr>
@@ -79,17 +82,17 @@ window.location.href = "login.html"
 <th>Rate</th>
 <th>Total</th>
 <th>Station</th>
+<th>Date</th>
 <th>Delete</th>
 </tr>
 
 </table>
+
 <br><br>
 
 <button onclick="downloadFuel()">Download Excel</button>
 
-<br><br>
 </div>
-
 
 
 <script>
@@ -106,12 +109,14 @@ fetch(API + "/get_vehicles")
 
 let select = document.getElementById("fuel_vehicle")
 
-select.innerHTML = "<option>Select Vehicle</option>"
+select.innerHTML = "<option value=''>Select Vehicle</option>"
 
 data.forEach(v=>{
 
 select.innerHTML += `
-<option>${v.vehicle_name}</option>
+<option value="${v.vehicle_name}">
+${v.vehicle_name}
+</option>
 `
 
 })
@@ -129,17 +134,29 @@ let type = document.getElementById("fuel_type").value
 let litres = document.getElementById("fuel_litres").value
 let rate = document.getElementById("fuel_rate").value
 let station = document.getElementById("fuel_station").value
+let date = document.getElementById("fuel_date").value
+
+if(vehicle=="" || type=="" || litres=="" || rate==""){
+alert("Please fill required fields")
+return
+}
 
 fetch(API + "/add_fuel?vehicle="+vehicle+
 "&fuel_type="+type+
 "&litres="+litres+
 "&rate="+rate+
-"&station="+station,{
+"&station="+station+
+"&fuel_date="+date,{
 method:"POST"
 })
+
 .then(()=>{
 
 alert("Fuel Added")
+
+document.getElementById("fuel_litres").value=""
+document.getElementById("fuel_rate").value=""
+document.getElementById("fuel_station").value=""
 
 loadFuel()
 
@@ -165,6 +182,7 @@ table.innerHTML = `
 <th>Rate</th>
 <th>Total</th>
 <th>Station</th>
+<th>Date</th>
 <th>Delete</th>
 </tr>
 `
@@ -179,6 +197,7 @@ table.innerHTML += `
 <td>${f.rate}</td>
 <td>${f.total_cost}</td>
 <td>${f.station}</td>
+<td>${f.fuel_date || "-"}</td>
 <td>
 <button onclick="deleteFuel(${f.id})">Delete</button>
 </td>
@@ -195,6 +214,8 @@ table.innerHTML += `
 
 function deleteFuel(id){
 
+if(!confirm("Delete this fuel record?")) return
+
 fetch(API + "/delete_fuel/"+id,{
 method:"DELETE"
 })
@@ -208,8 +229,11 @@ loadFuel()
 
 
 
-loadVehicleDropdown()
-loadFuel()
+function downloadFuel(){
+
+window.open(API + "/export_fuel_excel")
+
+}
 
 
 
@@ -221,6 +245,10 @@ window.location.href = "login.html"
 
 }
 
+
+
+loadVehicleDropdown()
+loadFuel()
 
 </script>
 
