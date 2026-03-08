@@ -508,7 +508,6 @@ def monthly_attendance(db: Session = Depends(get_db)):
 
     return report
 
-
 @app.get("/export_fuel_excel")
 def export_fuel_excel(db: Session = Depends(get_db)):
 
@@ -522,33 +521,7 @@ def export_fuel_excel(db: Session = Depends(get_db)):
             "Litres": f.litres,
             "Rate": f.rate,
             "Station": f.station,
-            "Date": f.date
-        })
-
-    df = pd.DataFrame(data)
-
-    file_path = "fuel_report.xlsx"
-    df.to_excel(file_path, index=False)
-
-    return FileResponse(file_path, filename="fuel_report.xlsx")
-
-from fastapi.responses import FileResponse
-import pandas as pd
-
-@app.get("/export_fuel_excel")
-def export_fuel_excel(db: Session = Depends(get_db)):
-
-    fuels = db.query(models.Fuel).all()
-
-    data = []
-    for f in fuels:
-        data.append({
-            "Vehicle": f.vehicle,
-            "Fuel Type": f.fuel_type,
-            "Litres": f.litres,
-            "Rate": f.rate,
-            "Station": f.station,
-            "Date": f.date
+            "Date": str(f.date)
         })
 
     df = pd.DataFrame(data)
@@ -569,7 +542,7 @@ def export_salary_excel(db: Session = Depends(get_db)):
             "Driver": s.driver_name,
             "Amount": s.amount,
             "Notes": s.notes,
-            "Date": s.date
+            "Date": str(s.date)
         })
 
     df = pd.DataFrame(data)
@@ -578,3 +551,46 @@ def export_salary_excel(db: Session = Depends(get_db)):
     df.to_excel(file_path, index=False)
 
     return FileResponse(file_path, filename="salary_report.xlsx")
+
+@app.get("/export_attendance_excel")
+def export_attendance_excel(db: Session = Depends(get_db)):
+
+    attendance = db.query(models.Attendance).all()
+
+    data = []
+    for a in attendance:
+        data.append({
+            "Driver": a.driver_name,
+            "Date": str(a.date),
+            "Status": a.status
+        })
+
+    df = pd.DataFrame(data)
+
+    file_path = "attendance_report.xlsx"
+    df.to_excel(file_path, index=False)
+
+    return FileResponse(file_path, filename="attendance_report.xlsx")
+
+@app.get("/export_trips_excel")
+def export_trips_excel(db: Session = Depends(get_db)):
+
+    trips = db.query(models.Trip).all()
+
+    data = []
+    for t in trips:
+        data.append({
+            "Vehicle": t.vehicle,
+            "Driver": t.driver,
+            "From": t.from_location,
+            "To": t.to_location,
+            "Load": t.load,
+            "Date": str(t.date)
+        })
+
+    df = pd.DataFrame(data)
+
+    file_path = "trips_report.xlsx"
+    df.to_excel(file_path, index=False)
+
+    return FileResponse(file_path, filename="trips_report.xlsx")

@@ -498,3 +498,11 @@ loadAttendance()
 })
 
 }
+function downloadAttendance(){
+
+window.open(
+"https://transport-system-1-i84e.onrender.com/export_attendance_excel",
+"_blank"
+)
+
+}
