@@ -290,7 +290,6 @@ updateMonth()
 })
 
 }
-
 function highlightDays(){
 
 let driver=document.getElementById("driver").value
@@ -309,33 +308,38 @@ let date=`${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")
 d.classList.remove("present","halfday","absent")
 d.dataset.state=""
 
+let status=null
+
+// check saved attendance
 attendanceData.forEach(a=>{
+if(a.driver_name===driver && a.date.startsWith(date)){
+status=a.status
+}
+})
 
-if(a.driver_name===driver && a.date===date){
+// check temporary change (overwrite)
+if(tempAttendance[date]){
+status=tempAttendance[date].status
+}
 
-if(a.status==="Present"){
+if(status==="Present"){
 d.classList.add("present")
 d.dataset.state="Present"
 }
 
-if(a.status==="Half"){
+if(status==="Half"){
 d.classList.add("halfday")
 d.dataset.state="Half"
 }
 
-if(a.status==="Absent"){
+if(status==="Absent"){
 d.classList.add("absent")
 d.dataset.state="Absent"
 }
 
-}
-
-})
-
 })
 
 }
-
 function prevMonth(){
 currentDate.setMonth(currentDate.getMonth()-1)
 loadAttendance()

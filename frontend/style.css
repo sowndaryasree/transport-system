@@ -217,3 +217,7 @@ background:#e63c3c;
 transform:scale(1.05);
 background:#334155;
 }
+.day:hover{
+transform:scale(1.05);
+transition:0.15s;
+}
