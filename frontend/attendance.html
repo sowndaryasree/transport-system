@@ -133,26 +133,24 @@ cursor:pointer;
 
 <script>
 
-const API="https://transport-system-1-i84e.onrender.com"
+const API = "https://transport-system-1-i84e.onrender.com"
 
-let currentDate=new Date()
-let attendanceData=[]
-let tempAttendance={}
+let currentDate = new Date()
+let attendanceData = []
+let tempAttendance = {}
 
 function loadDrivers(){
 
 fetch(API+"/get_drivers")
-
 .then(res=>res.json())
-
 .then(data=>{
 
-let driver=document.getElementById("driver")
+let driver = document.getElementById("driver")
 
 driver.innerHTML=""
 
 data.forEach(d=>{
-driver.innerHTML+=`<option value="${d.name}">${d.name}</option>`
+driver.innerHTML += `<option value="${d.name}">${d.name}</option>`
 })
 
 loadAttendance()
@@ -166,13 +164,9 @@ function updateMonth(){
 let month=currentDate.getMonth()
 let year=currentDate.getFullYear()
 
-let monthNames=[
-"January","February","March","April","May","June",
-"July","August","September","October","November","December"
-]
+let names=["January","February","March","April","May","June","July","August","September","October","November","December"]
 
-document.getElementById("monthTitle").innerText=
-monthNames[month]+" "+year
+document.getElementById("monthTitle").innerText = names[month]+" "+year
 
 generateCalendar()
 
@@ -181,6 +175,7 @@ generateCalendar()
 function generateCalendar(){
 
 let calendar=document.getElementById("calendar")
+
 calendar.innerHTML=""
 
 let year=currentDate.getFullYear()
@@ -190,14 +185,12 @@ let firstDay=new Date(year,month,1).getDay()
 let daysInMonth=new Date(year,month+1,0).getDate()
 
 for(let i=0;i<firstDay;i++){
-let empty=document.createElement("div")
-calendar.appendChild(empty)
+calendar.innerHTML += "<div></div>"
 }
 
 for(let i=1;i<=daysInMonth;i++){
 
 let div=document.createElement("div")
-
 div.className="day"
 div.innerText=i
 
@@ -218,44 +211,44 @@ let driver=document.getElementById("driver").value
 let year=currentDate.getFullYear()
 let month=currentDate.getMonth()+1
 
-let m=String(month).padStart(2,"0")
-let d=String(day).padStart(2,"0")
-
-let date=year+"-"+m+"-"+d
+let date=`${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`
 
 let status=""
 
-if(!div.classList.contains("present") && !div.classList.contains("halfday") && !div.classList.contains("absent")){
+div.classList.remove("present","halfday","absent")
+
+if(!div.dataset.state){
 
 div.classList.add("present")
+div.dataset.state="Present"
 status="Present"
 
 }
 
-else if(div.classList.contains("present")){
+else if(div.dataset.state=="Present"){
 
-div.classList.remove("present")
 div.classList.add("halfday")
+div.dataset.state="Half"
 status="Half"
 
 }
 
-else if(div.classList.contains("halfday")){
+else if(div.dataset.state=="Half"){
 
-div.classList.remove("halfday")
 div.classList.add("absent")
+div.dataset.state="Absent"
 status="Absent"
 
 }
 
 else{
 
-div.classList.remove("absent")
+div.dataset.state=""
 status="Clear"
 
 }
 
-tempAttendance[date]={
+tempAttendance[date] = {
 driver_name:driver,
 status:status
 }
@@ -284,7 +277,7 @@ Promise.all(requests)
 
 .then(()=>{
 
-alert("Attendance Saved")
+alert("Attendance saved")
 
 tempAttendance={}
 
@@ -319,15 +312,11 @@ let days=document.querySelectorAll(".day")
 let year=currentDate.getFullYear()
 let month=currentDate.getMonth()+1
 
-let m=String(month).padStart(2,"0")
-
 days.forEach(d=>{
 
 let day=d.innerText
 
-let dd=String(day).padStart(2,"0")
-
-let date=year+"-"+m+"-"+dd
+let date=`${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`
 
 d.classList.remove("present","halfday","absent")
 
@@ -335,9 +324,9 @@ attendanceData.forEach(a=>{
 
 if(a.driver_name==driver && a.date.includes(date)){
 
-if(a.status=="Present"){d.classList.add("present")}
-else if(a.status=="Half"){d.classList.add("halfday")}
-else if(a.status=="Absent"){d.classList.add("absent")}
+if(a.status=="Present") d.classList.add("present")
+if(a.status=="Half") d.classList.add("halfday")
+if(a.status=="Absent") d.classList.add("absent")
 
 }
 
@@ -368,6 +357,5 @@ window.location.href="login.html"
 }
 
 </script>
-
 </body>
 </html>

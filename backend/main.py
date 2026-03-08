@@ -425,24 +425,27 @@ def add_maintenance(
     return {"message":"Maintenance added"}
 
 @app.post("/add_attendance")
-def add_attendance(
-    driver_name: str,
-    date: str,
-    status: str,
-    db: Session = Depends(get_db)
-):
+def add_attendance(driver_name:str,date:str,status:str,db:Session=Depends(get_db)):
 
     from datetime import datetime
 
-    date_obj = datetime.strptime(date,"%Y-%m-%d").date()
+    date_obj=datetime.strptime(date,"%Y-%m-%d").date()
 
-    record = models.Attendance(
-        driver_name=driver_name,
-        date=date_obj,
-        status=status
-    )
+    record=db.query(models.Attendance).filter(
+        models.Attendance.driver_name==driver_name,
+        models.Attendance.date==date_obj
+    ).first()
 
-    db.add(record)
+    if record:
+        record.status=status
+    else:
+        record=models.Attendance(
+            driver_name=driver_name,
+            date=date_obj,
+            status=status
+        )
+        db.add(record)
+
     db.commit()
 
     return {"message":"Attendance saved"}
