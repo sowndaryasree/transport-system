@@ -244,14 +244,18 @@ def get_attendance(db:Session=Depends(get_db)):
     return result
 
 # EXPORTS
-@app.get("/export_trips_excel")
-def export_trips_excel(db: Session = Depends(get_db)):
+@app.get("/export_full_report")
+def export_full_report(db: Session = Depends(get_db)):
 
+    from fastapi.responses import FileResponse
+    import pandas as pd
+
+    # ---------------- TRIPS ----------------
     trips = db.query(models.Trip).all()
 
-    data = []
+    trips_data = []
     for t in trips:
-        data.append({
+        trips_data.append({
             "Vehicle": t.vehicle,
             "Driver": t.driver,
             "Customer": t.customer,
@@ -260,84 +264,33 @@ def export_trips_excel(db: Session = Depends(get_db)):
             "Payment": t.customer_payment
         })
 
-    df = pd.DataFrame(data)
+    trips_df = pd.DataFrame(trips_data)
 
-    file_path = "trips_report.xlsx"
-    df.to_excel(file_path, index=False)
 
-    return FileResponse(file_path, filename="trips_report.xlsx")
-@app.get("/export_fuel_excel")
-def export_fuel_excel(db:Session=Depends(get_db)):
+    # ---------------- FUEL ----------------
+    fuels = db.query(models.Fuel).all()
 
-    fuels=db.query(models.Fuel).all()
-
-    data=[]
+    fuel_data = []
     for f in fuels:
-        data.append({
-            "Vehicle":f.vehicle,
-            "Fuel Type":f.fuel_type,
-            "Litres":f.litres,
-            "Rate":f.rate,
-            "Total":f.total_cost,
-            "Station":f.station,
-            "Date":str(f.fuel_date)
+        fuel_data.append({
+            "Vehicle": f.vehicle,
+            "Fuel Type": f.fuel_type,
+            "Litres": f.litres,
+            "Rate": f.rate,
+            "Total": f.total_cost,
+            "Station": f.station,
+            "Date": str(f.fuel_date)
         })
 
-    df=pd.DataFrame(data)
+    fuel_df = pd.DataFrame(fuel_data)
 
-    file_path="fuel_report.xlsx"
-    df.to_excel(file_path,index=False)
 
-    return FileResponse(file_path,filename="fuel_report.xlsx")
-
-@app.get("/export_salary_excel")
-def export_salary_excel(db:Session=Depends(get_db)):
-
-    salaries=db.query(models.Salary).all()
-
-    data=[]
-    for s in salaries:
-        data.append({
-            "Driver":s.driver_name,
-            "Amount":s.amount,
-            "Notes":s.notes,
-            "Date":str(s.salary_date)
-        })
-
-    df=pd.DataFrame(data)
-
-    file_path="salary_report.xlsx"
-    df.to_excel(file_path,index=False)
-
-    return FileResponse(file_path,filename="salary_report.xlsx")
-
-@app.get("/export_attendance_excel")
-def export_attendance_excel(db:Session=Depends(get_db)):
-
-    attendance=db.query(models.Attendance).all()
-
-    data=[]
-    for a in attendance:
-        data.append({
-            "Driver":a.driver_name,
-            "Date":str(a.date),
-            "Status":a.status
-        })
-
-    df=pd.DataFrame(data)
-
-    file_path="attendance_report.xlsx"
-    df.to_excel(file_path,index=False)
-
-    return FileResponse(file_path,filename="attendance_report.xlsx")
-@app.get("/export_maintenance_excel")
-def export_maintenance_excel(db: Session = Depends(get_db)):
-
+    # ---------------- MAINTENANCE ----------------
     maintenance = db.query(models.Maintenance).all()
 
-    data = []
+    maint_data = []
     for m in maintenance:
-        data.append({
+        maint_data.append({
             "Vehicle": m.vehicle,
             "Type": m.maintenance_type,
             "Cost": m.cost,
@@ -345,29 +298,48 @@ def export_maintenance_excel(db: Session = Depends(get_db)):
             "Date": str(m.maintenance_date)
         })
 
-    df = pd.DataFrame(data)
+    maint_df = pd.DataFrame(maint_data)
 
-    file_path = "maintenance_report.xlsx"
-    df.to_excel(file_path, index=False)
 
-    return FileResponse(file_path, filename="maintenance_report.xlsx")
+    # ---------------- SALARY ----------------
+    salaries = db.query(models.Salary).all()
 
-@app.get("/export_attendance_excel")
-def export_attendance_excel(db: Session = Depends(get_db)):
+    salary_data = []
+    for s in salaries:
+        salary_data.append({
+            "Driver": s.driver_name,
+            "Amount": s.amount,
+            "Notes": s.notes,
+            "Date": str(s.salary_date)
+        })
 
+    salary_df = pd.DataFrame(salary_data)
+
+
+    # ---------------- ATTENDANCE ----------------
     attendance = db.query(models.Attendance).all()
 
-    data = []
+    att_data = []
     for a in attendance:
-        data.append({
+        att_data.append({
             "Driver": a.driver_name,
             "Date": str(a.date),
             "Status": a.status
         })
 
-    df = pd.DataFrame(data)
+    att_df = pd.DataFrame(att_data)
 
-    file_path = "attendance_report.xlsx"
-    df.to_excel(file_path, index=False)
 
-    return FileResponse(file_path, filename="attendance_report.xlsx")
+    # ---------------- WRITE EXCEL ----------------
+    file_path = "transport_full_report.xlsx"
+
+    with pd.ExcelWriter(file_path) as writer:
+
+        trips_df.to_excel(writer, sheet_name="Trips", index=False)
+        fuel_df.to_excel(writer, sheet_name="Fuel", index=False)
+        maint_df.to_excel(writer, sheet_name="Maintenance", index=False)
+        salary_df.to_excel(writer, sheet_name="Salary", index=False)
+        att_df.to_excel(writer, sheet_name="Attendance", index=False)
+
+
+    return FileResponse(file_path, filename="transport_full_report.xlsx")

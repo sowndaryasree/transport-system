@@ -85,7 +85,9 @@ window.location.href = "login.html"
 
 <h2>Vehicle Profit</h2>
 <canvas id="vehicleChart"></canvas>
+<br><br>
 
+<button onclick="downloadReport()">Download Full Report</button>
 </div>
 
 
@@ -207,9 +209,8 @@ data:values
 }
 
 
-
-function downloadExcel(){
-window.open(API+"/export_excel")
+function downloadReport(){
+window.open("https://transport-system-1-i84e.onrender.com/export_full_report")
 }
 
 

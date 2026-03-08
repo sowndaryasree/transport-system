@@ -362,22 +362,9 @@ loadDashboard();
 
 
 // EXPORTS
-function downloadExcel(){
-window.open(API+"/export_excel")
+function downloadReport(){
+window.open("https://transport-system-1-i84e.onrender.com/export_full_report")
 }
-
-function downloadFuel(){
-window.open(API+"/export_fuel_excel")
-}
-
-function downloadSalary(){
-window.open(API+"/export_salary_excel")
-}
-
-function downloadAttendance(){
-window.open(API+"/export_attendance_excel")
-}
-
 
 // LOGOUT
 function logout(){

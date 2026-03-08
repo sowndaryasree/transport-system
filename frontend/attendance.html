@@ -131,9 +131,6 @@ cursor:pointer;
 
 <div class="calendar" id="calendar"></div>
 
-<br><br>
-
-<button onclick="downloadAttendance()">Download Excel</button>
 
 </div>
 
@@ -373,9 +370,7 @@ currentDate.setMonth(currentDate.getMonth()+1)
 updateMonth()
 }
 
-function downloadAttendance(){
-window.open(API+"/export_attendance_excel","_blank")
-}
+
 
 document.getElementById("driver").addEventListener("change",loadAttendance)
 
