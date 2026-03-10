@@ -329,3 +329,29 @@ def add_attendance(driver_name:str,date:str,status:str,db:Session=Depends(get_db
     db.commit()
 
     return {"message":"Attendance saved"}
+
+@app.get("/export_full_report")
+def export_full_report(db: Session = Depends(get_db)):
+
+    trips = db.query(models.Trip).all()
+    fuel = db.query(models.Fuel).all()
+    salary = db.query(models.Salary).all()
+
+    data = []
+
+    for t in trips:
+        data.append({
+            "Vehicle": t.vehicle,
+            "Driver": t.driver,
+            "Material": t.material_type,
+            "Units": t.units,
+            "Customer": t.customer,
+            "Payment": t.customer_payment
+        })
+
+    df = pd.DataFrame(data)
+
+    file_name = "transport_report.xlsx"
+    df.to_excel(file_name, index=False)
+
+    return FileResponse(file_name, filename="transport_report.xlsx")
