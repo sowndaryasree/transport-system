@@ -270,6 +270,7 @@ def get_salary(db:Session=Depends(get_db)):
     return db.query(models.Salary).all()
 
 
+
 @app.put("/update_salary/{id}")
 def update_salary(id:int,driver_name:str,amount:float,notes:str="",salary_date:str=None,db:Session=Depends(get_db)):
 
@@ -303,3 +304,28 @@ def get_attendance(db:Session=Depends(get_db)):
         })
 
     return result
+
+@app.post("/add_attendance")
+def add_attendance(driver_name:str,date:str,status:str,db:Session=Depends(get_db)):
+
+    date_obj=datetime.strptime(date,"%Y-%m-%d").date()
+
+    # check if attendance already exists
+    record=db.query(models.Attendance).filter(
+        models.Attendance.driver_name==driver_name,
+        models.Attendance.date==date_obj
+    ).first()
+
+    if record:
+        record.status=status
+    else:
+        attendance=models.Attendance(
+            driver_name=driver_name,
+            date=date_obj,
+            status=status
+        )
+        db.add(attendance)
+
+    db.commit()
+
+    return {"message":"Attendance saved"}
