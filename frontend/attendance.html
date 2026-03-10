@@ -312,8 +312,10 @@ let status=null
 
 // check saved attendance
 attendanceData.forEach(a=>{
-if(a.driver_name===driver && a.date.includes(date)){
-status=a.status
+let dbDate = a.date.split("T")[0]
+
+if(a.driver_name === driver && dbDate === date){
+status = a.status
 }
 })
 
