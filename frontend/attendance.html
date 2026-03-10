@@ -312,7 +312,7 @@ let status=null
 
 // check saved attendance
 attendanceData.forEach(a=>{
-if(a.driver_name===driver && a.date.startsWith(date)){
+if(a.driver_name===driver && a.date.includes(date)){
 status=a.status
 }
 })
@@ -342,16 +342,16 @@ d.dataset.state="Absent"
 }
 function prevMonth(){
 currentDate.setMonth(currentDate.getMonth()-1)
-loadAttendance()
+updateMonth()
 }
 
 function nextMonth(){
 currentDate.setMonth(currentDate.getMonth()+1)
-loadAttendance()
+updateMonth()
 }
 
-document.getElementById("driver").addEventListener("change",loadAttendance)
 
+document.getElementById("driver").addEventListener("change",highlightDays)
 loadDrivers()
 
 function logout(){
