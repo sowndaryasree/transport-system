@@ -260,24 +260,17 @@ status="Absent"
 else{
 
 div.dataset.state=""
-div.classList.remove("present","halfday","absent")
-
-tempAttendance[date]={
-driver_name:driver,
-status:"Present"
-}
-
-div.dataset.state="Present"
-div.classList.add("present")
+delete tempAttendance[date]
+return
 
 }
+
 tempAttendance[date]={
 driver_name:driver,
 status:status
 }
 
 }
-
 /* SAVE ATTENDANCE */
 
 function saveAttendance(){

@@ -336,22 +336,77 @@ def export_full_report(db: Session = Depends(get_db)):
     trips = db.query(models.Trip).all()
     fuel = db.query(models.Fuel).all()
     salary = db.query(models.Salary).all()
+    vehicles = db.query(models.Vehicle).all()
+    drivers = db.query(models.Driver).all()
+    attendance = db.query(models.Attendance).all()
 
-    data = []
-
+    trip_data = []
     for t in trips:
-        data.append({
+        trip_data.append({
             "Vehicle": t.vehicle,
             "Driver": t.driver,
             "Material": t.material_type,
             "Units": t.units,
             "Customer": t.customer,
-            "Payment": t.customer_payment
+            "Payment": t.customer_payment,
+            "Start Date": str(t.start_date),
+            "End Date": str(t.end_date)
         })
 
-    df = pd.DataFrame(data)
+    fuel_data = []
+    for f in fuel:
+        fuel_data.append({
+            "Vehicle": f.vehicle,
+            "Fuel Type": f.fuel_type,
+            "Litres": f.litres,
+            "Rate": f.rate,
+            "Total Cost": f.total_cost,
+            "Station": f.station,
+            "Date": str(f.fuel_date)
+        })
 
-    file_name = "transport_report.xlsx"
-    df.to_excel(file_name, index=False)
+    salary_data = []
+    for s in salary:
+        salary_data.append({
+            "Driver": s.driver_name,
+            "Amount": s.amount,
+            "Notes": s.notes,
+            "Date": str(s.salary_date)
+        })
 
-    return FileResponse(file_name, filename="transport_report.xlsx")
+    vehicle_data = []
+    for v in vehicles:
+        vehicle_data.append({
+            "Name": v.vehicle_name,
+            "Number": v.vehicle_number,
+            "Type": v.vehicle_type,
+            "Capacity": v.unit_capacity
+        })
+
+    driver_data = []
+    for d in drivers:
+        driver_data.append({
+            "Name": d.name,
+            "Phone": d.phone,
+            "License": d.license_number
+        })
+
+    attendance_data = []
+    for a in attendance:
+        attendance_data.append({
+            "Driver": a.driver_name,
+            "Date": str(a.date),
+            "Status": a.status
+        })
+
+    file_name = "transport_full_report.xlsx"
+
+    with pd.ExcelWriter(file_name) as writer:
+        pd.DataFrame(trip_data).to_excel(writer, sheet_name="Trips", index=False)
+        pd.DataFrame(fuel_data).to_excel(writer, sheet_name="Fuel", index=False)
+        pd.DataFrame(salary_data).to_excel(writer, sheet_name="Salary", index=False)
+        pd.DataFrame(vehicle_data).to_excel(writer, sheet_name="Vehicles", index=False)
+        pd.DataFrame(driver_data).to_excel(writer, sheet_name="Drivers", index=False)
+        pd.DataFrame(attendance_data).to_excel(writer, sheet_name="Attendance", index=False)
+
+    return FileResponse(file_name, filename="transport_full_report.xlsx")
